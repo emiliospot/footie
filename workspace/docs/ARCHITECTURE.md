@@ -640,21 +640,65 @@ workspace/apps/api/
 - ⏳ TeamHandler (CRUD + statistics)
 - ⏳ PlayerHandler (CRUD + statistics)
 
-### Phase 2: Analytics Engine
+### Phase 2: External Data Feed Integration
 
-- Worker service consuming Redis Streams
-- Real-time xG calculation
-- Pass completion analysis
-- Heat map generation
-- Player performance metrics
+**Goal:** Ingest live match data from external providers
 
-### Phase 3: Advanced Features
+**Components to Add:**
+
+- `WebhookHandler` - Receive external events
+- `ExternalFeedClient` - Poll APIs (fallback)
+- `EventTransformer` - Map external IDs to internal
+- `SignatureValidator` - Webhook security
+- `FeedHealthMonitor` - Track feed status
+
+**See:** `docs/MATCH_DATA_FEEDS.md` for complete implementation guide
+
+### Phase 3: Analytics Engine with OpenSearch
+
+**Goal:** Real-time analytics and advanced search
+
+**The Perfect Trio Pattern:**
+
+```
+PostgreSQL → Source of truth (authoritative data)
+Redis      → Real-time messaging (WebSocket broadcasts)
+OpenSearch → Analytics & search (complex queries, aggregations)
+```
+
+**Why OpenSearch?**
+
+| Use Case         | PostgreSQL | OpenSearch      |
+| ---------------- | ---------- | --------------- |
+| Full-text search | ❌ Slow    | ✅ Super fast   |
+| Fuzzy search     | ❌ Hard    | ✅ Built-in     |
+| Event analytics  | ⚠️ Heavy   | ✅ Real-time    |
+| Aggregations     | ⚠️ Slow    | ✅ Milliseconds |
+
+**Perfect For:**
+
+- 🔍 Advanced search ("Find players with >20 progressive passes")
+- 📊 Real-time analytics (heat maps, xG trends, pass networks)
+- 🎯 Player similarity ("Find players similar to Pedri")
+- 📈 Event timelines (shots inside box 75-90 minutes)
+- 🔥 Live dashboards (real-time match statistics)
+
+**Components to Add:**
+
+- `AnalyticsWorker` - Consume Redis Streams → Index to OpenSearch
+- `SearchService` - Query OpenSearch for analytics
+- `OpenSearchClient` - AWS OpenSearch integration
+- `EventIndexer` - Transform events for indexing
+
+**See:** `docs/OPENSEARCH_INTEGRATION.md` for complete implementation guide
+
+### Phase 4: Advanced Features
 
 - GraphQL API (alongside REST)
 - gRPC for service-to-service
-- Event sourcing for match replay
-- CQRS for read/write separation
-- Elasticsearch for advanced search
+- Machine learning predictions (xG models)
+- Multi-tenant support
+- Mobile apps (React Native)
 
 ---
 
