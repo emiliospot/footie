@@ -1,7 +1,7 @@
 # Multi-stage Dockerfile for Angular frontend
 
 # Stage 1: Development
-FROM node:20-alpine AS development
+FROM node:25-alpine AS development
 
 WORKDIR /app
 
@@ -20,7 +20,7 @@ EXPOSE 4200
 CMD ["npm", "start"]
 
 # Stage 2: Builder
-FROM node:20-alpine AS builder
+FROM node:25-alpine AS builder
 
 WORKDIR /app
 
