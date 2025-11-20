@@ -23,7 +23,7 @@ npm run dev
 - **Backend API:** http://localhost:8081
 - **API Docs:** http://localhost:8081/swagger
 
-> For detailed setup, see [QUICKSTART.md](QUICKSTART.md)
+> For detailed setup, see [docs/QUICKSTART.md](docs/QUICKSTART.md)
 
 ---
 
@@ -134,7 +134,7 @@ We use a **hybrid approach** combining:
 
 The repository pattern makes it trivial to swap from GORM to sqlx, ent, or any other ORM without changing business logic.
 
-For detailed architectural decisions, see [ARCHITECTURE.md](ARCHITECTURE.md).
+For detailed architectural decisions, see [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 
 ---
 
@@ -150,7 +150,7 @@ Comprehensive testing across all layers:
 | Frontend Unit       | Jasmine + Karma       | `apps/web/**/*.spec.ts`           |
 | E2E Tests           | Playwright            | `apps/web-e2e/src/**/*.spec.ts`   |
 
-See [TESTING_STRATEGY.md](TESTING_STRATEGY.md) for complete testing approach.
+See [docs/TESTING_STRATEGY.md](docs/TESTING_STRATEGY.md) for complete testing approach.
 
 ---
 
@@ -215,10 +215,11 @@ Infrastructure includes:
 
 ## 📖 Documentation
 
-- **[QUICKSTART.md](QUICKSTART.md)** - 3-minute setup guide
-- **[ARCHITECTURE.md](ARCHITECTURE.md)** - Architecture decisions
-- **[TESTING_STRATEGY.md](TESTING_STRATEGY.md)** - Testing approach
-- **[infra/terraform/README.md](infra/terraform/README.md)** - AWS deployment
+- **[docs/QUICKSTART.md](docs/QUICKSTART.md)** - 3-minute setup guide
+- **[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)** - Architecture decisions
+- **[docs/TESTING_STRATEGY.md](docs/TESTING_STRATEGY.md)** - Testing approach
+- **[docs/DEPLOYMENT.md](docs/DEPLOYMENT.md)** - AWS deployment guide
+- **[infra/terraform/README.md](infra/terraform/README.md)** - Terraform setup
 
 ---
 
@@ -232,9 +233,9 @@ MIT License
 
 For questions or issues:
 
-1. Check [QUICKSTART.md](QUICKSTART.md) for setup help
-2. See [ARCHITECTURE.md](ARCHITECTURE.md) for design decisions
-3. Review [TESTING_STRATEGY.md](TESTING_STRATEGY.md) for testing info
+1. Check [docs/QUICKSTART.md](docs/QUICKSTART.md) for setup help
+2. See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for design decisions
+3. Review [docs/TESTING_STRATEGY.md](docs/TESTING_STRATEGY.md) for testing info
 
 ---
 

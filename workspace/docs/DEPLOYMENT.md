@@ -62,7 +62,7 @@ aws configure
 ### 1. Initialize Terraform
 
 ```bash
-cd workspace/infra/terraform
+cd infra/terraform
 
 # Initialize Terraform
 terraform init
@@ -82,7 +82,7 @@ terraform apply tfplan
 The infrastructure is organized into modules:
 
 ```
-workspace/infra/terraform/
+infra/terraform/
 ├── main.tf           # Main configuration
 ├── variables.tf      # Input variables
 ├── outputs.tf        # Output values
@@ -111,7 +111,7 @@ workspace/infra/terraform/
 
 ### Backend Environment Variables
 
-Create `workspace/apps/api/.env.production`:
+Create `apps/api/.env.production`:
 
 ```bash
 # Application
@@ -120,7 +120,7 @@ APP_NAME=footie
 APP_VERSION=1.0.0
 
 # Backend API
-API_PORT=8080
+API_PORT=8081
 API_HOST=0.0.0.0
 
 # Database (use RDS endpoint from Terraform output)
@@ -153,7 +153,7 @@ LOG_FORMAT=json
 
 ### Frontend Environment Variables
 
-Create `workspace/apps/web/src/environments/environment.prod.ts`:
+Create `apps/web/src/environments/environment.prod.ts`:
 
 ```typescript
 export const environment = {
@@ -220,7 +220,7 @@ curl https://yourdomain.com
 
 ```bash
 # Build and push Docker image
-cd workspace/apps/api
+cd apps/api
 docker build -t footie-api:latest .
 
 # Tag for ECR
@@ -240,7 +240,6 @@ aws ecs update-service \
 
 ```bash
 # Build frontend
-cd workspace
 npm run build:web
 
 # Deploy to S3

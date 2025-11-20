@@ -130,7 +130,7 @@ workspace/
 - **Testing**: See [TESTING_STRATEGY.md](TESTING_STRATEGY.md)
 - **Architecture**: See [ARCHITECTURE.md](ARCHITECTURE.md)
 - **Deployment**: See [DEPLOYMENT.md](DEPLOYMENT.md)
-- **Full Guide**: See [README.md](README.md)
+- **Full Guide**: See [../README.md](../README.md)
 
 ## 🐛 Troubleshooting
 

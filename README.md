@@ -86,12 +86,13 @@ footie/
 
 ## 📚 Documentation
 
-**All documentation is in the `workspace/` directory:**
+**All documentation is in the `workspace/docs/` directory:**
 
 - **[workspace/README.md](workspace/README.md)** - Complete monorepo guide
-- **[workspace/QUICKSTART.md](workspace/QUICKSTART.md)** - 3-minute setup
-- **[workspace/TESTING_STRATEGY.md](workspace/TESTING_STRATEGY.md)** - Testing approach
-- **[workspace/ARCHITECTURE.md](workspace/ARCHITECTURE.md)** - Architecture decisions
+- **[workspace/docs/QUICKSTART.md](workspace/docs/QUICKSTART.md)** - 3-minute setup
+- **[workspace/docs/ARCHITECTURE.md](workspace/docs/ARCHITECTURE.md)** - Architecture decisions
+- **[workspace/docs/TESTING_STRATEGY.md](workspace/docs/TESTING_STRATEGY.md)** - Testing approach
+- **[workspace/docs/DEPLOYMENT.md](workspace/docs/DEPLOYMENT.md)** - AWS deployment guide
 
 ---
 
@@ -144,7 +145,7 @@ We use a **hybrid approach**:
 
 The repository pattern makes it trivial to swap from GORM to sqlx, ent, or any other ORM.
 
-For detailed architectural decisions, see [workspace/ARCHITECTURE.md](workspace/ARCHITECTURE.md).
+For detailed architectural decisions, see [workspace/docs/ARCHITECTURE.md](workspace/docs/ARCHITECTURE.md).
 
 ---
 
@@ -159,7 +160,7 @@ Comprehensive testing across all layers:
 - **Frontend Component Tests**: Angular Testing Library
 - **E2E Tests**: Playwright covering critical user journeys
 
-See [workspace/TESTING_STRATEGY.md](workspace/TESTING_STRATEGY.md) for details.
+See [workspace/docs/TESTING_STRATEGY.md](workspace/docs/TESTING_STRATEGY.md) for details.
 
 ---
 
@@ -181,7 +182,7 @@ terraform init
 terraform apply
 ```
 
-See [workspace/README.md](workspace/README.md) for complete deployment guide.
+See **[workspace/docs/DEPLOYMENT.md](workspace/docs/DEPLOYMENT.md)** for complete deployment guide.
 
 ---
 
@@ -216,8 +217,8 @@ MIT License - see LICENSE file
 ## 🆘 Support
 
 - **Documentation**: Start with [workspace/README.md](workspace/README.md)
-- **Quick Start**: [workspace/QUICKSTART.md](workspace/QUICKSTART.md)
-- **Architecture**: [workspace/ARCHITECTURE.md](workspace/ARCHITECTURE.md)
+- **Quick Start**: [workspace/docs/QUICKSTART.md](workspace/docs/QUICKSTART.md)
+- **Architecture**: [workspace/docs/ARCHITECTURE.md](workspace/docs/ARCHITECTURE.md)
 
 ---
 
