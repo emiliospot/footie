@@ -1,7 +1,7 @@
 # Multi-stage Dockerfile for Go backend
 
 # Stage 1: Development
-FROM golang:1.21-alpine AS development
+FROM golang:1.25-alpine AS development
 
 WORKDIR /app
 
@@ -25,7 +25,7 @@ EXPOSE 8080
 CMD ["air", "-c", ".air.toml"]
 
 # Stage 2: Builder
-FROM golang:1.21-alpine AS builder
+FROM golang:1.25-alpine AS builder
 
 WORKDIR /app
 
