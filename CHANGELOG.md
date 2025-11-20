@@ -1,141 +1,115 @@
 # Changelog
 
-All notable changes to this project will be documented in this file.
-
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+All notable changes to this project will be documented in this file. See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
 ## [Unreleased]
 
-### Added
+### ✨ Features
 
-#### Infrastructure & DevOps
+- **monorepo**: Nx workspace for efficient monorepo management
+- **backend**: RESTful API using Gin framework with PostgreSQL + Redis
+- **backend**: JWT authentication with role-based access control
+- **backend**: Repository pattern for database abstraction
+- **backend**: Air hot-reload for development
+- **backend**: Comprehensive testing suite (unit, integration, benchmarks)
+- **frontend**: Angular 19 with standalone components
+- **frontend**: Angular Material UI components
+- **frontend**: HTTP interceptors and route guards
+- **testing**: E2E tests with Playwright
+- **infra**: AWS infrastructure with Terraform (VPC, ECS, RDS, ElastiCache, S3, CloudFront)
+- **ci**: GitHub Actions workflows for CI/CD
+- **ci**: Pre-commit hooks using Husky + lint-staged
+- **ci**: Type checking in CI/CD pipeline
 
-- ✅ **Pre-commit hooks** using Husky for automated quality checks
-- ✅ **lint-staged** integration for fast, staged-file-only linting
-- ✅ **Type checking** in CI/CD pipeline for both TypeScript and Go
-- ✅ **Comprehensive VSCode configuration**
-  - Settings for Go, Angular, Prettier, ESLint, Markdownlint
-  - Recommended extensions list
-  - Custom tasks for development workflow
-  - Air schema validation for `.air.toml`
-- ✅ **GitHub Actions CI/CD workflows**
-  - Main CI pipeline with linting, type checking, and testing
-  - PR validation workflow
-  - AWS ECS deployment workflow
-  - Dependabot for automated dependency updates
+### 🐛 Bug Fixes
 
-#### Monorepo Architecture
+- **backend**: Go variable shadowing issues in error handling
+- **backend**: Unchecked errors in strconv.Atoi calls
+- **backend**: Integer overflow protection in type conversions
+- **backend**: Type assertion safety checks
+- **backend**: godotenv.Load error handling
+- **backend**: Build tag format for Go integration tests
+- **backend**: Huge parameter warning with pointer receiver
+- **frontend**: Angular member ordering ESLint warnings
+- **frontend**: Naming convention rules for snake_case in models
+- **frontend**: Zone.js version for Angular 19 compatibility
+- **docs**: Markdown linting configuration
+- **infra**: Port conflicts for PostgreSQL (5436), Redis (6386), API (8081)
+- **infra**: Docker Compose V2 syntax compatibility
 
-- ✅ **Nx workspace** for efficient monorepo management
-- ✅ **Project structure consolidation** into single workspace
-- ✅ **Unified build and test orchestration**
-- ✅ **Dependency graph visualization**
+### 📚 Documentation
 
-#### Backend (Go API)
+- **docs**: Comprehensive README with setup instructions
+- **docs**: QUICKSTART guide for new developers
+- **docs**: TESTING_STRATEGY documentation
+- **docs**: ARCHITECTURE comparison guide
+- **docs**: DEPLOYMENT guide for AWS
+- **docs**: Organized documentation into workspace/docs/ folder
 
-- ✅ **RESTful API** using Gin framework
-- ✅ **PostgreSQL integration** with GORM
-- ✅ **Redis caching** support
-- ✅ **JWT authentication** with role-based access control
-- ✅ **Repository pattern** for database abstraction
-- ✅ **Air hot-reload** for development
-- ✅ **Comprehensive testing suite**
-  - Unit tests with testify
-  - Integration tests with testcontainers-go
-  - Benchmark tests for performance
-- ✅ **Strict linting** with golangci-lint
-- ✅ **Type safety** with go vet
+### 🔧 Chores
 
-#### Frontend (Angular 19)
-
-- ✅ **Angular 19** with standalone components
-- ✅ **Strict TypeScript** configuration
-- ✅ **Angular Material** UI components
-- ✅ **HTTP interceptors** for auth and error handling
-- ✅ **Route guards** for authentication
-- ✅ **Lazy-loaded routes** for performance
-- ✅ **Comprehensive ESLint** configuration
-- ✅ **Type checking** with TypeScript compiler
-
-#### Testing
-
-- ✅ **Backend unit tests** using Go testing stdlib + testify
-- ✅ **Backend integration tests** with real PostgreSQL containers
-- ✅ **Backend benchmarks** for performance-critical code
-- ✅ **Frontend unit tests** with Jasmine + Karma
-- ✅ **E2E tests** with Playwright
-- ✅ **Test coverage reporting**
-
-#### Documentation
-
-- ✅ **Comprehensive README** with setup instructions
-- ✅ **QUICKSTART guide** for new developers
-- ✅ **TESTING_STRATEGY** documentation
-- ✅ **ARCHITECTURE** comparison guide
-- ✅ **Technology stack** documentation
-
-#### AWS Infrastructure (Terraform)
-
-- ✅ **VPC with public/private subnets**
-- ✅ **ECS Fargate** for container orchestration
-- ✅ **RDS PostgreSQL** for production database
-- ✅ **ElastiCache Redis** for caching
-- ✅ **S3 + CloudFront** for frontend hosting
-- ✅ **Application Load Balancer** for traffic distribution
-- ✅ **Security groups** and IAM roles
-
-### Fixed
-
-- ✅ **Go variable shadowing** issues in error handling
-- ✅ **Unchecked errors** in strconv.Atoi calls
-- ✅ **Integer overflow** protection in type conversions
-- ✅ **Type assertion safety** checks
-- ✅ **Angular member ordering** ESLint warnings
-- ✅ **Naming convention** rules for snake_case in models
-- ✅ **Markdown linting** configuration (MD034, MD036, MD040)
-- ✅ **Port conflicts** for PostgreSQL (5436), Redis (6386), API (8081)
-- ✅ **Docker Compose V2** syntax compatibility
-- ✅ **Zone.js version** for Angular 19 compatibility
-- ✅ **Missing imports** in Go packages
-- ✅ **godotenv.Load** error handling
-- ✅ **Build tag format** for Go integration tests
-- ✅ **Huge parameter** warning with pointer receiver
-
-### Changed
-
-- ✅ **Backend port** from 8080 to 8081 to avoid conflicts
-- ✅ **Database port** from 5432 to 5436 (local development)
-- ✅ **Redis port** from 6379 to 6386 (local development)
-- ✅ **Project structure** consolidated into workspace monorepo
-- ✅ **Angular version** upgraded to 19
-- ✅ **golangci-lint config** to allow parallel runners
-
-### Removed
-
-- ✅ **Deprecated documentation** files
-- ✅ **Old backend/frontend** folders (consolidated into workspace)
-- ✅ **Temporary migration** scripts
-- ✅ **Unused Makefile** at root level
-- ✅ **cSpell** extension (too noisy for football terminology)
-
-## [1.0.0] - 2025-11-20
-
-### Added
-
-- 🎉 Initial project scaffold
-- 🎉 Nx monorepo setup
-- 🎉 Go backend with Gin + GORM
-- 🎉 Angular 19 frontend
-- 🎉 PostgreSQL + Redis with Docker
-- 🎉 AWS infrastructure with Terraform
-- 🎉 GitHub Actions CI/CD
-- 🎉 Comprehensive testing strategy
-- 🎉 Pre-commit hooks for quality assurance
+- **backend**: Backend port changed from 8080 to 8081
+- **infra**: Database port changed from 5432 to 5436 (local dev)
+- **infra**: Redis port changed from 6379 to 6386 (local dev)
+- **monorepo**: Project structure consolidated into workspace
+- **frontend**: Angular upgraded to version 19
+- **backend**: golangci-lint config to allow parallel runners
+- **cleanup**: Removed deprecated documentation files
+- **cleanup**: Removed old backend/frontend folders
+- **cleanup**: Removed temporary migration scripts
 
 ---
 
-## 📋 **Pre-Commit Hooks**
+## 🚀 How to Use This Changelog
+
+This changelog is now **automatically generated** from your commit messages using [Conventional Commits](https://www.conventionalcommits.org/).
+
+### Commit Message Format
+
+```
+<type>(<scope>): <subject>
+
+<body>
+
+<footer>
+```
+
+### Types
+
+- `feat`: New feature (appears in changelog)
+- `fix`: Bug fix (appears in changelog)
+- `docs`: Documentation changes
+- `style`: Code style changes (formatting, etc.)
+- `refactor`: Code refactoring
+- `perf`: Performance improvements
+- `test`: Adding or updating tests
+- `chore`: Maintenance tasks
+- `ci`: CI/CD changes
+
+### Examples
+
+```bash
+feat(backend): add match statistics endpoint
+fix(frontend): resolve authentication token refresh issue
+docs(readme): update installation instructions
+chore(deps): upgrade Angular to v19
+```
+
+### Generate Changelog
+
+```bash
+# Add new entries since last release
+npm run changelog
+
+# Generate entire changelog from scratch
+npm run changelog:first
+```
+
+The changelog will be automatically updated when you run `npm version` to bump the version.
+
+---
+
+## 📋 Pre-Commit Hooks
 
 Every commit now runs:
 
@@ -143,7 +117,7 @@ Every commit now runs:
 - ✅ **TypeScript typecheck**: Ensures no type errors
 - ✅ **Go vet**: Validates Go code correctness
 
-## 🚀 **CI/CD Pipeline**
+## 🚀 CI/CD Pipeline
 
 On every push/PR:
 
@@ -154,8 +128,3 @@ On every push/PR:
 5. ✅ Run E2E tests (Playwright)
 6. ✅ Build all artifacts
 7. ✅ Deploy to AWS (on main branch)
-
----
-
-[Unreleased]: https://github.com/emiliospot/footie/compare/v1.0.0...HEAD
-[1.0.0]: https://github.com/emiliospot/footie/releases/tag/v1.0.0

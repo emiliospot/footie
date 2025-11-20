@@ -44,7 +44,7 @@
     "serve": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "cd apps/api && air",
+        "command": "cd apps/api && $HOME/go/bin/air",
         "cwd": "."
       }
     },

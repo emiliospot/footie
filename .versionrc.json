@@ -1,0 +1,22 @@
+{
+  "types": [
+    { "type": "feat", "section": "✨ Features" },
+    { "type": "fix", "section": "🐛 Bug Fixes" },
+    { "type": "chore", "section": "🔧 Chores", "hidden": false },
+    { "type": "docs", "section": "📚 Documentation" },
+    { "type": "style", "section": "💎 Styles", "hidden": true },
+    { "type": "refactor", "section": "♻️ Refactoring" },
+    { "type": "perf", "section": "⚡ Performance" },
+    { "type": "test", "section": "✅ Tests" },
+    { "type": "build", "section": "🏗️ Build System", "hidden": true },
+    { "type": "ci", "section": "👷 CI/CD", "hidden": true }
+  ],
+  "releaseCommitMessageFormat": "chore(release): {{currentTag}}",
+  "skip": {
+    "bump": false,
+    "changelog": false,
+    "commit": false,
+    "tag": false
+  }
+}
+
