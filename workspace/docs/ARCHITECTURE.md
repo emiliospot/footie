@@ -90,11 +90,11 @@ This document describes the complete architecture of the Footie platform, includ
 │  Opta / StatsBomb / API-Football / Football-Data.org                    │
 │                                                                          │
 │  Integration Methods:                                                   │
-│  • Webhooks → POST /api/v1/webhooks/match-events                       │
-│  • Polling  → Backend workers fetch from external APIs                  │
-│  • WebSocket → Real-time feed connections                               │
+│  • Webhooks → AWS API Gateway → Lambda → Kinesis                       │
+│  • Polling  → Backend workers → Kinesis                                 │
+│  • WebSocket → Real-time feed → Kinesis                                 │
 │                                                                          │
-│  Flow: External Feed → Backend → PostgreSQL → Redis → Clients          │
+│  Flow: External Feed → Lambda/Worker → Kinesis → Go Services           │
 └─────────────────────────────────────────────────────────────────────────┘
 ```
 
@@ -664,29 +664,90 @@ workspace/apps/api/
 
 ### Phase 2: External Data Feed Integration
 
-**Goal:** Ingest live match data from external providers
+**Goal:** Ingest live match data from external providers at scale
+
+**Architecture Pattern:**
+
+```
+External Feeds (Opta/StatsBomb/API-Football)
+                    ↓
+        AWS API Gateway (Webhooks)
+                    ↓
+            AWS Lambda (Validation)
+                    ↓
+        AWS Kinesis Data Streams
+                    ↓
+        Go Consumer Services
+                    ↓
+    ┌───────────────┴───────────────┐
+    ↓                               ↓
+PostgreSQL                    Redis Streams
+(Source of Truth)            (Event Log)
+    ↓                               ↓
+Redis Pub/Sub              Analytics Worker
+    ↓                               ↓
+WebSocket Hub              OpenSearch (Phase 3)
+    ↓
+Clients
+```
 
 **Components to Add:**
 
-- `WebhookHandler` - Receive external events
-- `ExternalFeedClient` - Poll APIs (fallback)
+- `AWS Lambda` - Webhook receiver & validator
+- `AWS Kinesis` - Event stream buffer (high throughput)
+- `KinesisConsumer` - Go service consuming from Kinesis
 - `EventTransformer` - Map external IDs to internal
-- `SignatureValidator` - Webhook security
 - `FeedHealthMonitor` - Track feed status
+
+**Why Kinesis?**
+
+- Handles 1000s events/sec
+- Ordered event processing
+- Replay capability
+- AWS-native integration
 
 **See:** `docs/MATCH_DATA_FEEDS.md` for complete implementation guide
 
 ### Phase 3: Analytics Engine with OpenSearch
 
-**Goal:** Real-time analytics and advanced search
+**Goal:** Real-time analytics and advanced search at scale
+
+**Production Architecture Pattern:**
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    EVENT INGESTION                          │
+└─────────────────────────────────────────────────────────────┘
+
+Match Events (shots, passes, goals, fouls, etc.)
+                    ↓
+        Go Backend API / Lambda
+                    ↓
+        ┌───────────┴───────────┐
+        ↓                       ↓
+    PostgreSQL            AWS Kinesis
+    (CRUD, Truth)        (Event Stream)
+        ↓                       ↓
+    Redis Pub/Sub         Go Consumer
+    (WebSocket)          (Analytics)
+        ↓                       ↓
+    Clients            AWS OpenSearch
+                       (Analytics Engine)
+                              ↓
+                    Real-time Dashboards
+                    • Heat maps
+                    • xG trends
+                    • Pass networks
+                    • Player similarity
+```
 
 **The Perfect Trio Pattern:**
 
-```
-PostgreSQL → Source of truth (authoritative data)
-Redis      → Real-time messaging (WebSocket broadcasts)
-OpenSearch → Analytics & search (complex queries, aggregations)
-```
+| Database       | Purpose             | Use Cases                         |
+| -------------- | ------------------- | --------------------------------- |
+| **PostgreSQL** | Source of truth     | CRUD, transactions, relationships |
+| **Redis**      | Real-time messaging | WebSocket, pub/sub, hot cache     |
+| **OpenSearch** | Analytics & search  | Complex queries, aggregations, ML |
 
 **Why OpenSearch?**
 
@@ -707,10 +768,17 @@ OpenSearch → Analytics & search (complex queries, aggregations)
 
 **Components to Add:**
 
-- `AnalyticsWorker` - Consume Redis Streams → Index to OpenSearch
+- `KinesisConsumer` - Consume Kinesis → Index to OpenSearch
+- `AnalyticsWorker` - Process Redis Streams → OpenSearch
 - `SearchService` - Query OpenSearch for analytics
 - `OpenSearchClient` - AWS OpenSearch integration
 - `EventIndexer` - Transform events for indexing
+
+**AWS Services:**
+
+- **AWS Kinesis** - Event stream buffer (1000s events/sec)
+- **AWS OpenSearch** - Managed search & analytics
+- **AWS Lambda** - Serverless event processing (optional)
 
 **See:** `docs/OPENSEARCH_INTEGRATION.md` for complete implementation guide
 
