@@ -90,13 +90,22 @@ footie/
 
 ## 📚 Documentation
 
-**All documentation is in the `workspace/docs/` directory:**
+### Getting Started
 
 - **[workspace/README.md](workspace/README.md)** - Complete monorepo guide
 - **[workspace/docs/QUICKSTART.md](workspace/docs/QUICKSTART.md)** - 3-minute setup
 - **[workspace/docs/ARCHITECTURE.md](workspace/docs/ARCHITECTURE.md)** - Architecture decisions
-- **[workspace/docs/TESTING_STRATEGY.md](workspace/docs/TESTING_STRATEGY.md)** - Testing approach
 - **[workspace/docs/DEPLOYMENT.md](workspace/docs/DEPLOYMENT.md)** - AWS deployment guide
+
+### Backend Guides
+
+- **[workspace/apps/api/README_SQLC.md](workspace/apps/api/README_SQLC.md)** - sqlc + pgx + golang-migrate guide
+- **[workspace/apps/api/REALTIME_ARCHITECTURE.md](workspace/apps/api/REALTIME_ARCHITECTURE.md)** - WebSocket + Redis Streams architecture
+- **[workspace/apps/api/MIGRATION_STATUS.md](workspace/apps/api/MIGRATION_STATUS.md)** - GORM → sqlc migration tracker
+
+### Testing
+
+- **[workspace/docs/TESTING_STRATEGY.md](workspace/docs/TESTING_STRATEGY.md)** - Testing approach
 
 ---
 
