@@ -168,11 +168,11 @@ We use a **production-grade approach** optimized for sports analytics with **cle
 
 ### Design Principles
 
-✅ **Interface-based design** - sqlc.Querier, event.Publisher interfaces  
-✅ **Repository pattern** - Data access through sqlc-generated queries  
-✅ **Clean separation** - Handlers → Services → Repository → Database  
-✅ **Dependency injection** - No global state, all dependencies injected  
-✅ **Easy testing** - Mock interfaces for unit tests  
+✅ **Interface-based design** - sqlc.Querier, event.Publisher interfaces
+✅ **Repository pattern** - Data access through sqlc-generated queries
+✅ **Clean separation** - Handlers → Services → Repository → Database
+✅ **Dependency injection** - No global state, all dependencies injected
+✅ **Easy testing** - Mock interfaces for unit tests
 ✅ **SOLID principles** - Single responsibility, dependency inversion
 
 This stack is used by betting companies, sports data providers, and real-time analytics systems.
