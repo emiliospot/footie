@@ -18,8 +18,8 @@ require (
 	github.com/testcontainers/testcontainers-go v0.40.0
 	golang.org/x/crypto v0.45.0
 	gorm.io/driver/postgres v1.5.4
-	gorm.io/driver/sqlite v1.5.4
-	gorm.io/gorm v1.25.5
+	gorm.io/driver/sqlite v1.6.0
+	gorm.io/gorm v1.31.1
 )
 
 require (
