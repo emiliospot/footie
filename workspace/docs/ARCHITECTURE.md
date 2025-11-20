@@ -10,12 +10,6 @@ This document describes the complete architecture of the Footie platform, includ
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────┐
-│                     EXTERNAL DATA FEEDS (Future)                         │
-│  Opta / StatsBomb / API-Football                                        │
-└─────────────────────────────┬───────────────────────────────────────────┘
-                              │ Webhook/Polling
-                              ▼
-┌─────────────────────────────────────────────────────────────────────────┐
 │                          ANGULAR FRONTEND                                │
 │  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐                 │
 │  │  Components  │  │   Services   │  │  WebSocket   │                 │
@@ -60,20 +54,38 @@ This document describes the complete architecture of the Footie platform, includ
 │  └────────┼────────────┼─────────────┼──────────────┼──────────┘   │
 └───────────┼────────────┼─────────────┼──────────────┼──────────────┘
             │            │             │              │
-            ▼            ▼             ▼              ▼
+            ▲            ▼             ▼              ▼
+            │
+┌───────────┴────────────────────────────────────────────────────────────┐
+│                  EXTERNAL DATA FEEDS (Future)                           │
+│  Opta / StatsBomb / API-Football                                       │
+│  → Webhooks directly to backend                                        │
+│  → Polling from backend workers                                        │
+└─────────────────────────────────────────────────────────────────────────┘
 ┌─────────────────────────────────────────────────────────────────────────┐
 │                         DATA & CACHE LAYER                               │
-│  ┌──────────────────────┐         ┌──────────────────────┐             │
-│  │   PostgreSQL 16      │         │      Redis 7         │             │
-│  │                      │         │                      │             │
-│  │  • Users             │         │  • Cache             │             │
-│  │  • Teams             │         │  • Streams           │             │
-│  │  • Players           │         │  • Pub/Sub           │             │
-│  │  • Matches           │         │  • Sessions          │             │
-│  │  • Match Events      │         │                      │             │
-│  │  • Statistics        │         │                      │             │
-│  └──────────────────────┘         └──────────────────────┘             │
+│  ┌──────────────────┐  ┌──────────────────┐  ┌──────────────────┐     │
+│  │ PostgreSQL 16    │  │    Redis 7       │  │ OpenSearch       │     │
+│  │                  │  │                  │  │ (Future)         │     │
+│  │ • Users          │  │ • Cache          │  │                  │     │
+│  │ • Teams          │  │ • Streams        │  │ • Full-text      │     │
+│  │ • Players        │  │ • Pub/Sub        │  │ • Analytics      │     │
+│  │ • Matches        │  │ • Sessions       │  │ • Aggregations   │     │
+│  │ • Match Events   │  │                  │  │ • Heat maps      │     │
+│  │ • Statistics     │  │                  │  │ • Player search  │     │
+│  │                  │  │                  │  │                  │     │
+│  │ Source of Truth  │  │ Real-time        │  │ Advanced Search  │     │
+│  └──────────────────┘  └──────────────────┘  └──────────────────┘     │
 └─────────────────────────────────────────────────────────────────────────┘
+                                    │
+                                    ▼
+                        ┌───────────────────────┐
+                        │  Analytics Worker     │
+                        │  (Future - Phase 3)   │
+                        │                       │
+                        │  Redis Streams →      │
+                        │  → OpenSearch Index   │
+                        └───────────────────────┘
 ```
 
 ---
