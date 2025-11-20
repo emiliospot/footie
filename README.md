@@ -25,20 +25,56 @@ npm run dev
 
 ```
 footie/
-├── workspace/              # Nx monorepo (all code here!)
+├── workspace/                      # Nx monorepo (all code here!)
 │   ├── apps/
-│   │   ├── api/           # Golang backend with Air hot-reload
-│   │   ├── web/           # Angular 19 frontend
-│   │   └── web-e2e/       # Playwright E2E tests
+│   │   ├── api/                   # Golang backend with Air hot-reload
+│   │   │   ├── cmd/api/           # Main application entry point
+│   │   │   ├── internal/
+│   │   │   │   ├── api/           # HTTP handlers, middleware, router
+│   │   │   │   ├── config/        # Configuration management
+│   │   │   │   ├── domain/        # Domain models
+│   │   │   │   ├── infrastructure/ # Database, Redis, WebSocket, Logger
+│   │   │   │   └── repository/    # Data access (sqlc + GORM legacy)
+│   │   │   ├── migrations/        # golang-migrate SQL files
+│   │   │   ├── pkg/               # Reusable packages (auth, utils)
+│   │   │   ├── sqlc.yaml          # sqlc configuration
+│   │   │   ├── Makefile           # Backend commands
+│   │   │   └── README_SQLC.md     # sqlc + pgx guide
+│   │   ├── web/                   # Angular 19 frontend
+│   │   │   ├── src/
+│   │   │   │   ├── app/
+│   │   │   │   │   ├── core/      # Guards, interceptors, services, models
+│   │   │   │   │   ├── features/  # Feature modules (auth, matches, players, teams)
+│   │   │   │   │   └── shared/    # Shared components
+│   │   │   │   └── environments/  # Environment configs
+│   │   │   └── angular.json
+│   │   └── web-e2e/               # Playwright E2E tests
 │   ├── libs/
-│   │   └── shared/        # Shared TypeScript types
+│   │   └── shared/                # Shared TypeScript types
 │   ├── infra/
-│   │   ├── docker/        # Docker Compose for local dev
-│   │   └── terraform/     # AWS infrastructure as code
-│   └── [documentation]
-├── .git/                  # Git repository
+│   │   ├── docker/
+│   │   │   └── docker-compose.yml # PostgreSQL 16 + Redis 8 + Redis Commander
+│   │   └── terraform/             # AWS infrastructure as code
+│   │       └── modules/           # Reusable Terraform modules
+│   ├── docs/                      # Comprehensive documentation
+│   │   ├── ARCHITECTURE.md        # System architecture & diagrams
+│   │   ├── QUICKSTART.md          # 3-minute setup guide
+│   │   ├── DEPLOYMENT.md          # AWS deployment guide
+│   │   ├── TESTING_STRATEGY.md    # Testing approach
+│   │   ├── MATCH_DATA_FEEDS.md    # External data integration (Phase 2)
+│   │   ├── OPENSEARCH_INTEGRATION.md # Analytics engine (Phase 3)
+│   │   ├── TECH_STACK_PRESENTATION.md # Complete tech overview
+│   │   ├── TECH_IMPROVEMENTS_ROADMAP.md # Post-MVP enhancements
+│   │   └── CI_CD_FIX.md           # CI/CD troubleshooting
+│   ├── nx.json                    # Nx workspace configuration
+│   ├── package.json               # Root scripts & dependencies
+│   └── README.md                  # Workspace guide
+├── .vscode/                       # VSCode settings & tasks
+├── .github/
+│   └── workflows/                 # GitHub Actions CI/CD
 ├── .gitignore
-└── README.md              # You are here!
+├── PM_INVITATION.md               # Product manager onboarding
+└── README.md                      # You are here!
 ```
 
 ---
