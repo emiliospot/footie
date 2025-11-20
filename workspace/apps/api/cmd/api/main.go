@@ -51,7 +51,16 @@ func main() {
 
 	// Run database migrations first
 	appLogger.Info("Running database migrations...")
-	if migErr := database.RunMigrations(cfg.Database.URL, "migrations"); migErr != nil {
+	databaseURL := fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=%s",
+		cfg.Database.User,
+		cfg.Database.Password,
+		cfg.Database.Host,
+		cfg.Database.Port,
+		cfg.Database.Name,
+		cfg.Database.SSLMode,
+	)
+	migrationsPath := "apps/api/migrations" // Relative to project root
+	if migErr := database.RunMigrations(databaseURL, migrationsPath); migErr != nil {
 		appLogger.Fatal("Failed to run migrations", "error", migErr)
 	}
 	appLogger.Info("Database migrations completed successfully")
