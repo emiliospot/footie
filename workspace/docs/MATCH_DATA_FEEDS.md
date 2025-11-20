@@ -6,24 +6,18 @@ This guide covers integrating external football data feeds (Opta, StatsBomb, API
 
 ---
 
-## 🎯 Current Architecture (Already Perfect!)
+## 🎯 Architecture Options
 
-You're right - we **DON'T need complex event sourcing**. Your architecture is already optimized for real-time match feeds:
+### Option A: Simple (Current - Perfect for MVP)
+
+**For:** < 100 events/sec, single region, getting started
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │              EXTERNAL DATA FEED                             │
 │  (Opta / StatsBomb / API-Football / Custom)                 │
 └─────────────────┬───────────────────────────────────────────┘
-                  │ HTTP Webhook / Polling / WebSocket
-                  ▼
-┌─────────────────────────────────────────────────────────────┐
-│              AWS API GATEWAY / LAMBDA                       │
-│  • Receives webhook                                         │
-│  • Validates payload                                        │
-│  • Forwards to backend                                      │
-└─────────────────┬───────────────────────────────────────────┘
-                  │ HTTP POST
+                  │ HTTP Webhook / Polling
                   ▼
 ┌─────────────────────────────────────────────────────────────┐
 │              YOUR GOLANG BACKEND                            │
@@ -49,25 +43,104 @@ You're right - we **DON'T need complex event sourcing**. Your architecture is al
                            ▼
                     ┌──────────────┐
                     │ WebSocket Hub│
-                    │              │
-                    │ Broadcasts   │
-                    │ to clients   │
                     └──────┬───────┘
                            │
                            ▼
                     ┌──────────────┐
-                    │   Angular    │
                     │   Clients    │
                     └──────────────┘
 ```
 
-**✅ Simple, fast, and exactly what you need!**
+**✅ Simple, fast, and perfect for getting started!**
 
 ---
 
-## 🔌 Integration Options
+### Option B: Production Scale (AWS-Native)
 
-### Option 1: Webhooks (Recommended - Real-Time)
+**For:** > 1000 events/sec, multiple regions, high availability
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│              EXTERNAL DATA FEEDS                            │
+│  (Opta / StatsBomb / API-Football / Custom)                 │
+└─────────────────┬───────────────────────────────────────────┘
+                  │ HTTP Webhooks
+                  ▼
+┌─────────────────────────────────────────────────────────────┐
+│              AWS API GATEWAY                                │
+│  • Rate limiting                                            │
+│  • Authentication                                           │
+│  • Request validation                                       │
+└─────────────────┬───────────────────────────────────────────┘
+                  │
+                  ▼
+┌─────────────────────────────────────────────────────────────┐
+│              AWS LAMBDA                                     │
+│  • Validate webhook signature                               │
+│  • Transform payload                                        │
+│  • Publish to Kinesis                                       │
+└─────────────────┬───────────────────────────────────────────┘
+                  │
+                  ▼
+┌─────────────────────────────────────────────────────────────┐
+│              AWS KINESIS DATA STREAMS                       │
+│  • Event buffer (ordered, replay)                           │
+│  • 1000s events/sec throughput                              │
+│  • Partitioned by match_id                                  │
+└─────────────────┬───────────────────────────────────────────┘
+                  │
+                  ▼
+┌─────────────────────────────────────────────────────────────┐
+│              GO KINESIS CONSUMER                            │
+│  • Processes events in order                                │
+│  • Auto-scaling based on shard count                        │
+│  • Checkpoint management                                    │
+└─────────────────┬───────────────────────────────────────────┘
+                  │
+        ┌─────────┴─────────┐
+        │                   │
+        ▼                   ▼
+┌──────────────┐    ┌──────────────┐
+│ RDS Postgres │    │ElastiCache   │
+│              │    │   Redis      │
+│ • Permanent  │    │              │
+│   storage    │    │ • Streams    │
+│              │    │ • Pub/Sub    │
+└──────────────┘    └──────┬───────┘
+                           │
+                           ▼
+                    ┌──────────────┐
+                    │ WebSocket Hub│
+                    └──────┬───────┘
+                           │
+                           ▼
+                    ┌──────────────┐
+                    │   Clients    │
+                    └──────────────┘
+```
+
+**Why Kinesis?**
+
+- ✅ Handles 1000s events/sec (betting companies use this)
+- ✅ Ordered processing (critical for match events)
+- ✅ Replay capability (reprocess events if needed)
+- ✅ Auto-scaling (handles traffic spikes)
+- ✅ Decouples ingestion from processing
+
+**When to use:**
+
+- High event volume (> 1000 events/sec)
+- Multiple data sources
+- Need for event replay
+- Production-grade reliability
+
+---
+
+---
+
+## 🔌 Integration Methods
+
+### Method 1: Webhooks (Recommended - Real-Time)
 
 **Best for:** Opta, StatsBomb, custom feeds
 
@@ -115,7 +188,7 @@ func (h *WebhookHandler) ReceiveMatchEvent(c *gin.Context) {
 }
 ```
 
-### Option 2: Polling (Fallback - Near Real-Time)
+### Method 2: Polling (Fallback - Near Real-Time)
 
 **Best for:** APIs without webhooks
 
@@ -175,7 +248,7 @@ func (w *MatchFeedWorker) pollLiveMatches(ctx context.Context) {
 }
 ```
 
-### Option 3: WebSocket Feed (Advanced - Ultra Real-Time)
+### Method 3: WebSocket Feed (Advanced - Ultra Real-Time)
 
 **Best for:** Premium data providers with WebSocket streams
 
@@ -221,7 +294,242 @@ func (w *ExternalFeedClient) Connect(ctx context.Context) {
 
 ---
 
-## 📋 Implementation Guide
+---
+
+## 🚀 Production Implementation (AWS Lambda + Kinesis)
+
+### AWS Lambda Webhook Receiver
+
+```javascript
+// lambda/webhook-receiver/index.js
+const AWS = require("aws-sdk");
+const kinesis = new AWS.Kinesis();
+
+exports.handler = async (event) => {
+  try {
+    // 1. Parse webhook payload
+    const payload = JSON.parse(event.body);
+
+    // 2. Validate signature
+    const signature = event.headers["X-Signature"];
+    if (!validateSignature(payload, signature)) {
+      return {
+        statusCode: 401,
+        body: JSON.stringify({ error: "Invalid signature" }),
+      };
+    }
+
+    // 3. Transform to internal format
+    const matchEvent = {
+      match_id: payload.match_id,
+      event_type: payload.event_type,
+      minute: payload.minute,
+      player_id: payload.player_id,
+      timestamp: new Date().toISOString(),
+      metadata: payload,
+    };
+
+    // 4. Publish to Kinesis
+    await kinesis
+      .putRecord({
+        StreamName: "match-events-stream",
+        PartitionKey: payload.match_id, // Events for same match go to same shard
+        Data: JSON.stringify(matchEvent),
+      })
+      .promise();
+
+    return {
+      statusCode: 200,
+      body: JSON.stringify({ status: "received" }),
+    };
+  } catch (error) {
+    console.error("Error processing webhook:", error);
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ error: "Internal error" }),
+    };
+  }
+};
+
+function validateSignature(payload, signature) {
+  const crypto = require("crypto");
+  const secret = process.env.WEBHOOK_SECRET;
+  const hmac = crypto.createHmac("sha256", secret);
+  hmac.update(JSON.stringify(payload));
+  const expectedSignature = hmac.digest("hex");
+  return signature === expectedSignature;
+}
+```
+
+### Go Kinesis Consumer
+
+```go
+// internal/workers/kinesis_consumer.go
+package workers
+
+import (
+    "context"
+    "encoding/json"
+
+    "github.com/aws/aws-sdk-go-v2/service/kinesis"
+    "github.com/aws/aws-sdk-go-v2/service/kinesis/types"
+)
+
+type KinesisConsumer struct {
+    client    *kinesis.Client
+    queries   *sqlc.Queries
+    publisher *events.Publisher
+    logger    *logger.Logger
+}
+
+func NewKinesisConsumer(
+    client *kinesis.Client,
+    queries *sqlc.Queries,
+    publisher *events.Publisher,
+    logger *logger.Logger,
+) *KinesisConsumer {
+    return &KinesisConsumer{
+        client:    client,
+        queries:   queries,
+        publisher: publisher,
+        logger:    logger,
+    }
+}
+
+func (kc *KinesisConsumer) Start(ctx context.Context) error {
+    streamName := "match-events-stream"
+
+    // Get shard iterator
+    shardIterator, err := kc.client.GetShardIterator(ctx, &kinesis.GetShardIteratorInput{
+        StreamName:        &streamName,
+        ShardId:           aws.String("shardId-000000000000"),
+        ShardIteratorType: types.ShardIteratorTypeLatest,
+    })
+    if err != nil {
+        return err
+    }
+
+    iterator := shardIterator.ShardIterator
+
+    for {
+        select {
+        case <-ctx.Done():
+            return nil
+
+        default:
+            // Get records from Kinesis
+            output, err := kc.client.GetRecords(ctx, &kinesis.GetRecordsInput{
+                ShardIterator: iterator,
+                Limit:         aws.Int32(100),
+            })
+            if err != nil {
+                kc.logger.Error("Failed to get records", "error", err)
+                continue
+            }
+
+            // Process each record
+            for _, record := range output.Records {
+                kc.processRecord(ctx, record)
+            }
+
+            // Update iterator for next batch
+            iterator = output.NextShardIterator
+
+            // Sleep if no records
+            if len(output.Records) == 0 {
+                time.Sleep(1 * time.Second)
+            }
+        }
+    }
+}
+
+func (kc *KinesisConsumer) processRecord(ctx context.Context, record types.Record) {
+    var event MatchEvent
+    if err := json.Unmarshal(record.Data, &event); err != nil {
+        kc.logger.Error("Failed to unmarshal event", "error", err)
+        return
+    }
+
+    // 1. Save to PostgreSQL
+    savedEvent, err := kc.queries.CreateMatchEvent(ctx, sqlc.CreateMatchEventParams{
+        MatchID:   event.MatchID,
+        EventType: event.EventType,
+        Minute:    event.Minute,
+        PlayerID:  event.PlayerID,
+        // ... other fields
+    })
+    if err != nil {
+        kc.logger.Error("Failed to save event", "error", err)
+        return
+    }
+
+    // 2. Publish to Redis for WebSocket
+    go kc.publisher.PublishMatchEvent(ctx, savedEvent)
+
+    kc.logger.Info("Processed event", "match_id", event.MatchID, "type", event.EventType)
+}
+```
+
+### Terraform Configuration
+
+```hcl
+# infra/terraform/kinesis.tf
+resource "aws_kinesis_stream" "match_events" {
+  name             = "match-events-stream"
+  shard_count      = 2
+  retention_period = 24
+
+  shard_level_metrics = [
+    "IncomingBytes",
+    "IncomingRecords",
+    "OutgoingBytes",
+    "OutgoingRecords",
+  ]
+
+  tags = {
+    Environment = var.environment
+    Application = "footie"
+  }
+}
+
+# Lambda function
+resource "aws_lambda_function" "webhook_receiver" {
+  filename      = "lambda/webhook-receiver.zip"
+  function_name = "footie-webhook-receiver"
+  role          = aws_iam_role.lambda_role.arn
+  handler       = "index.handler"
+  runtime       = "nodejs18.x"
+
+  environment {
+    variables = {
+      KINESIS_STREAM_NAME = aws_kinesis_stream.match_events.name
+      WEBHOOK_SECRET      = var.webhook_secret
+    }
+  }
+}
+
+# API Gateway
+resource "aws_apigatewayv2_api" "webhook_api" {
+  name          = "footie-webhook-api"
+  protocol_type = "HTTP"
+}
+
+resource "aws_apigatewayv2_integration" "lambda" {
+  api_id           = aws_apigatewayv2_api.webhook_api.id
+  integration_type = "AWS_PROXY"
+  integration_uri  = aws_lambda_function.webhook_receiver.invoke_arn
+}
+
+resource "aws_apigatewayv2_route" "webhook" {
+  api_id    = aws_apigatewayv2_api.webhook_api.id
+  route_key = "POST /webhooks/match-events"
+  target    = "integrations/${aws_apigatewayv2_integration.lambda.id}"
+}
+```
+
+---
+
+## 📋 Simple Implementation Guide (No AWS)
 
 ### Step 1: Create Webhook Handler
 
@@ -623,6 +931,6 @@ Feed → Backend → PostgreSQL + Redis → WebSocket → Angular
 
 ---
 
-**Status:** ✅ Architecture Ready - Just add webhook endpoint!  
-**Complexity:** 🟢 Simple (exactly what you need)  
+**Status:** ✅ Architecture Ready - Just add webhook endpoint!
+**Complexity:** 🟢 Simple (exactly what you need)
 **Time to Implement:** 2-4 hours
