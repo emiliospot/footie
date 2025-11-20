@@ -316,5 +316,5 @@ git push
 
 ---
 
-**Status:** 🔴 Broken → 🟡 Temporarily Fixed → 🟢 Properly Fixed  
+**Status:** 🔴 Broken → 🟡 Temporarily Fixed → 🟢 Properly Fixed
 **Time to Fix:** 5 minutes (disable) or 2 hours (proper tests)
