@@ -15,6 +15,7 @@ import (
 	"github.com/emiliospot/footie/api/internal/infrastructure/database"
 	"github.com/emiliospot/footie/api/internal/infrastructure/logger"
 	"github.com/emiliospot/footie/api/internal/infrastructure/redis"
+	ws "github.com/emiliospot/footie/api/internal/infrastructure/websocket"
 )
 
 // @title Footie API.
@@ -80,8 +81,13 @@ func main() {
 	}
 	appLogger.Info("Redis connected successfully")
 
+	// Initialize WebSocket hub
+	hub := ws.NewHub(redisClient, appLogger)
+	go hub.Run(ctx)
+	appLogger.Info("WebSocket hub started")
+
 	// Initialize router
-	router := api.NewRouter(cfg, pool, redisClient, appLogger)
+	router := api.NewRouter(cfg, pool, redisClient, hub, appLogger)
 
 	// Create HTTP server
 	srv := &http.Server{

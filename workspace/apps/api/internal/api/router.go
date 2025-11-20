@@ -2,9 +2,11 @@ package api
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	"github.com/gorilla/websocket"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/redis/go-redis/v9"
 	swaggerFiles "github.com/swaggo/files"
@@ -14,10 +16,20 @@ import (
 	"github.com/emiliospot/footie/api/internal/api/middleware"
 	"github.com/emiliospot/footie/api/internal/config"
 	"github.com/emiliospot/footie/api/internal/infrastructure/logger"
+	ws "github.com/emiliospot/footie/api/internal/infrastructure/websocket"
 )
 
+var upgrader = websocket.Upgrader{
+	ReadBufferSize:  1024,
+	WriteBufferSize: 1024,
+	CheckOrigin: func(r *http.Request) bool {
+		// In production, check against allowed origins
+		return true
+	},
+}
+
 // NewRouter creates and configures the HTTP router.
-func NewRouter(cfg *config.Config, pool *pgxpool.Pool, redis *redis.Client, logger *logger.Logger) *gin.Engine {
+func NewRouter(cfg *config.Config, pool *pgxpool.Pool, redis *redis.Client, hub *ws.Hub, logger *logger.Logger) *gin.Engine {
 	// Set Gin mode
 	if cfg.IsProduction() {
 		gin.SetMode(gin.ReleaseMode)
@@ -49,6 +61,34 @@ func NewRouter(cfg *config.Config, pool *pgxpool.Pool, redis *redis.Client, logg
 		})
 	})
 
+	// WebSocket endpoint for real-time match updates
+	router.GET("/ws/matches/:id", func(c *gin.Context) {
+		matchIDStr := c.Param("id")
+		matchID, err := strconv.ParseInt(matchIDStr, 10, 32)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid match ID"})
+			return
+		}
+
+		// Upgrade HTTP connection to WebSocket
+		conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
+		if err != nil {
+			logger.Error("Failed to upgrade WebSocket", "error", err)
+			return
+		}
+
+		// Get user ID from context (if authenticated)
+		userID := int32(0)
+		if userIDVal, exists := c.Get("user_id"); exists {
+			if uid, ok := userIDVal.(int32); ok {
+				userID = uid
+			}
+		}
+
+		// Serve WebSocket connection
+		ws.ServeWs(hub, conn, int32(matchID), userID)
+	})
+
 	// Swagger documentation
 	if cfg.IsDevelopment() {
 		router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
@@ -57,10 +97,10 @@ func NewRouter(cfg *config.Config, pool *pgxpool.Pool, redis *redis.Client, logg
 	// TODO: Update handlers to use sqlc queries instead of GORM
 	// The handlers need to be refactored to work with sqlc + pgx
 	// For now, we'll just set up the basic routes structure
-	
+
 	// Initialize sqlc queries
 	// queries := sqlc.New(pool)
-	
+
 	// Temporarily commented out until handlers are updated for sqlc
 	/*
 	// Initialize handlers
