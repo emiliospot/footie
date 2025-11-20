@@ -79,12 +79,20 @@ footie/
 - **Angular Material** for UI
 - **Playwright** for E2E testing
 
-### Infrastructure
+### Infrastructure & AWS Services
 
-- **Docker & Docker Compose**
+- **Docker & Docker Compose** - Local development
 - **Nx** for monorepo management
 - **Terraform** for AWS IaC
 - **GitHub Actions** for CI/CD
+
+**AWS Services (Production):**
+- **AWS Lambda** - Serverless webhook processing
+- **AWS Kinesis** - Event streaming (1000s events/sec)
+- **AWS OpenSearch** - Analytics engine (Phase 3)
+- **AWS RDS PostgreSQL** - Managed database
+- **AWS ElastiCache Redis** - Managed cache
+- **AWS API Gateway** - Webhook endpoints
 
 ---
 
@@ -102,6 +110,11 @@ footie/
 - **[workspace/apps/api/README_SQLC.md](workspace/apps/api/README_SQLC.md)** - sqlc + pgx + golang-migrate guide
 - **[workspace/apps/api/REALTIME_ARCHITECTURE.md](workspace/apps/api/REALTIME_ARCHITECTURE.md)** - WebSocket + Redis Streams architecture
 - **[workspace/apps/api/MIGRATION_STATUS.md](workspace/apps/api/MIGRATION_STATUS.md)** - GORM → sqlc migration tracker
+
+### Advanced Features (Future)
+
+- **[workspace/docs/MATCH_DATA_FEEDS.md](workspace/docs/MATCH_DATA_FEEDS.md)** - External data feed integration (Phase 2)
+- **[workspace/docs/OPENSEARCH_INTEGRATION.md](workspace/docs/OPENSEARCH_INTEGRATION.md)** - Analytics engine with OpenSearch (Phase 3)
 
 ### Testing
 
@@ -187,14 +200,40 @@ ws://localhost:8088/ws/matches/:id
 
 We use a **production-grade approach** for sports analytics:
 
+### Current Stack (Phase 1)
+
 - **sqlc + pgx** - Type-safe SQL queries (used by betting companies & analytics teams)
 - **golang-migrate** - Version-controlled database migrations
 - **Raw SQL** - Perfect for complex analytics queries (xG, pass accuracy, heat maps)
 - **Repository pattern** - Clean data access abstraction
+- **WebSocket + Redis** - Real-time match updates (sub-100ms)
 - **Clean separation** of concerns
 - **Easy to test** and maintain
 
-This stack is the industry standard for high-performance analytics applications.
+### Future Enhancements
+
+**Phase 2: External Data Feeds (AWS-Native)**
+```
+External Feeds → API Gateway → Lambda → Kinesis → Go Consumers
+```
+- AWS Lambda for serverless webhook processing
+- AWS Kinesis for high-throughput event streaming (1000s events/sec)
+- Auto-scaling and replay capability
+
+**Phase 3: Analytics Engine (Production Scale)**
+```
+Events → Kinesis → Go Consumer → OpenSearch
+```
+- AWS OpenSearch for advanced analytics (heat maps, xG trends, player similarity)
+- Real-time dashboards with millisecond aggregations
+- Full-text search and fuzzy matching
+
+**The Perfect Trio:**
+- **PostgreSQL** - Source of truth (CRUD, transactions)
+- **Redis** - Real-time messaging (WebSocket, pub/sub)
+- **OpenSearch** - Analytics & search (complex queries, ML)
+
+This stack is the industry standard for high-performance analytics applications used by betting companies, sports data providers, and live streaming platforms.
 
 For detailed architectural decisions, see [workspace/docs/ARCHITECTURE.md](workspace/docs/ARCHITECTURE.md).
 
