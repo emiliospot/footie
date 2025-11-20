@@ -59,7 +59,7 @@ func main() {
 		cfg.Database.Name,
 		cfg.Database.SSLMode,
 	)
-	migrationsPath := "apps/api/migrations" // Relative to project root
+	migrationsPath := "./migrations" // Relative to apps/api directory
 	if migErr := database.RunMigrations(databaseURL, migrationsPath); migErr != nil {
 		appLogger.Fatal("Failed to run migrations", "error", migErr)
 	}
