@@ -331,18 +331,3 @@ Create new sqlc-based integration tests following the template in this document.
 4. **Future:** Add performance benchmarks
 
 ---
-
-## 📊 Current Status
-
-| Item                   | Status      | Notes                         |
-| ---------------------- | ----------- | ----------------------------- |
-| Old GORM tests         | ✅ Disabled | Renamed to `.disabled`        |
-| CI/CD pipeline         | ✅ Passing  | Tests run successfully        |
-| sqlc integration tests | ⏳ TODO     | Template provided in this doc |
-| Unit tests             | ✅ Working  | Handler tests with mocks      |
-
----
-
-**Status:** 🟢 Fixed (Old tests disabled, CI/CD passing)
-**Next Step:** Write new sqlc integration tests (2 hours)
-**Priority:** Medium (current unit tests provide coverage)
