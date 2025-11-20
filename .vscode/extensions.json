@@ -1,0 +1,35 @@
+{
+  "recommendations": [
+    // Essentials
+    "esbenp.prettier-vscode",
+    "dbaeumer.vscode-eslint",
+    "editorconfig.editorconfig",
+
+    // Go Development
+    "golang.go",
+
+    // Angular/TypeScript
+    "angular.ng-template",
+    "nrwl.angular-console",
+
+    // Markdown
+    "davidanson.vscode-markdownlint",
+    "yzhang.markdown-all-in-one",
+
+    // Docker
+    "ms-azuretools.vscode-docker",
+
+    // YAML/TOML
+    "redhat.vscode-yaml",
+    "tamasfe.even-better-toml",
+
+    // Git
+    "eamodio.gitlens",
+
+    // Utilities
+    "christian-kohler.path-intellisense",
+    "visualstudioexptteam.vscodeintellicode",
+    "gruntfuggly.todo-tree"
+  ],
+  "unwantedRecommendations": []
+}

@@ -1,0 +1,132 @@
+{
+  // ==========================================
+  // GENERAL EDITOR SETTINGS
+  // ==========================================
+  "editor.formatOnSave": true,
+  "editor.formatOnPaste": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll": "explicit",
+    "source.organizeImports": "explicit"
+  },
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.tabSize": 2,
+  "editor.insertSpaces": true,
+  "files.trimTrailingWhitespace": true,
+  "files.insertFinalNewline": true,
+  "files.trimFinalNewlines": true,
+
+  // ==========================================
+  // FILE EXCLUSIONS
+  // ==========================================
+  "files.exclude": {
+    "**/.git": true,
+    "**/.DS_Store": true,
+    "**/node_modules": true,
+    "**/dist": true,
+    "**/coverage": true,
+    "**/.terraform": true,
+    "**/.air": true
+  },
+
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/dist": true,
+    "**/coverage": true,
+    "**/.terraform": true
+  },
+
+  // ==========================================
+  // PRETTIER CONFIGURATION
+  // ==========================================
+  "prettier.enable": true,
+  "prettier.singleQuote": true,
+  "prettier.trailingComma": "all",
+  "prettier.printWidth": 120,
+  "prettier.tabWidth": 2,
+  "prettier.useTabs": false,
+
+  // ==========================================
+  // TYPESCRIPT / JAVASCRIPT
+  // ==========================================
+  "typescript.tsdk": "workspace/node_modules/typescript/lib",
+  "typescript.enablePromptUseWorkspaceTsdk": true,
+  "javascript.format.enable": false,
+  "typescript.format.enable": false,
+
+  // ==========================================
+  // ESLINT CONFIGURATION
+  // ==========================================
+  "eslint.enable": true,
+  "eslint.validate": ["javascript", "javascriptreact", "typescript", "typescriptreact", "html"],
+  "eslint.workingDirectories": [{ "mode": "auto" }],
+
+  // ==========================================
+  // GO CONFIGURATION
+  // ==========================================
+  "go.lintTool": "golangci-lint",
+  "go.lintFlags": ["--fast"],
+  "go.formatTool": "goimports",
+  "go.useLanguageServer": true,
+  "go.toolsManagement.autoUpdate": true,
+  "gopls": {
+    "build.buildFlags": ["-tags=integration"],
+    "build.tags": ["integration"],
+    "ui.semanticTokens": true,
+    "ui.codelenses": {
+      "test": true,
+      "generate": true
+    }
+  },
+
+  // ==========================================
+  // MARKDOWNLINT CONFIGURATION
+  // ==========================================
+  "markdownlint.config": {
+    "MD033": false,
+    "MD034": false,
+    "MD036": false,
+    "MD040": false,
+    "MD013": {
+      "line_length": 120
+    }
+  },
+
+  // ==========================================
+  // NX CONSOLE
+  // ==========================================
+  "nxConsole.enableTelemetry": false,
+  "nxConsole.showNodeVersionfalse": true,
+
+  // ==========================================
+  // TERMINAL
+  // ==========================================
+  "terminal.integrated.defaultProfile.linux": "bash",
+
+  // ==========================================
+  // OTHER TOOLS
+  // ==========================================
+  "cSpell.enabled": false,
+
+  // ==========================================
+  // FILE ASSOCIATIONS
+  // ==========================================
+  "files.associations": {
+    "*.toml": "toml",
+    ".golangci.yml": "yaml",
+    ".air.toml": "toml"
+  },
+
+  // ==========================================
+  // YAML SCHEMAS
+  // ==========================================
+  "yaml.schemas": {
+    "https://json.schemastore.org/golangci-lint.json": ["**/.golangci.yml", "**/.golangci.yaml"]
+  },
+
+  // ==========================================
+  // TOML SCHEMAS
+  // ==========================================
+  "toml.schemas": {
+    "./.vscode/air-schema.json": ["**/apps/api/.air.toml"]
+  }
+}

@@ -1,0 +1,212 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "description": "Configuration schema for Air - Live reload for Go apps",
+  "properties": {
+    "build": {
+      "description": "Build configuration",
+      "properties": {
+        "args_bin": {
+          "description": "Arguments to pass to the binary",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "bin": {
+          "description": "Output binary path",
+          "type": "string"
+        },
+        "cmd": {
+          "description": "Command to build the project",
+          "type": "string"
+        },
+        "delay": {
+          "description": "Delay after file change before rebuilding (ms)",
+          "type": "integer"
+        },
+        "exclude_dir": {
+          "description": "Directories to exclude from watching",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "exclude_file": {
+          "description": "Specific files to exclude from watching",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "exclude_regex": {
+          "description": "Regex patterns to exclude files",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "exclude_unchanged": {
+          "description": "Exclude files with no changes",
+          "type": "boolean"
+        },
+        "follow_symlink": {
+          "description": "Follow symbolic links",
+          "type": "boolean"
+        },
+        "full_bin": {
+          "description": "Full command to run the binary with arguments",
+          "type": "string"
+        },
+        "include_dir": {
+          "description": "Directories to include in watching",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "include_ext": {
+          "description": "File extensions to watch",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "include_file": {
+          "description": "Specific files to watch",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "kill_delay": {
+          "description": "Delay before killing the process (e.g., '0s', '1s')",
+          "type": "string"
+        },
+        "log": {
+          "description": "Path to build error log file",
+          "type": "string"
+        },
+        "poll": {
+          "description": "Use polling instead of fsnotify",
+          "type": "boolean"
+        },
+        "poll_interval": {
+          "description": "Polling interval in milliseconds",
+          "type": "integer"
+        },
+        "post_cmd": {
+          "description": "Commands to run after building",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "pre_cmd": {
+          "description": "Commands to run before building",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "rerun": {
+          "description": "Rerun binary on crash",
+          "type": "boolean"
+        },
+        "rerun_delay": {
+          "description": "Delay before rerunning (ms)",
+          "type": "integer"
+        },
+        "send_interrupt": {
+          "description": "Send interrupt signal to stop old binary",
+          "type": "boolean"
+        },
+        "stop_on_error": {
+          "description": "Stop running old binary on build errors",
+          "type": "boolean"
+        }
+      },
+      "type": "object"
+    },
+    "color": {
+      "description": "Color configuration for output",
+      "properties": {
+        "app": {
+          "description": "Color for app output",
+          "type": "string"
+        },
+        "build": {
+          "description": "Color for build messages",
+          "type": "string"
+        },
+        "main": {
+          "description": "Color for main messages",
+          "type": "string"
+        },
+        "runner": {
+          "description": "Color for runner messages",
+          "type": "string"
+        },
+        "watcher": {
+          "description": "Color for watcher messages",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "log": {
+      "description": "Logging configuration",
+      "properties": {
+        "main_only": {
+          "description": "Only show main logs",
+          "type": "boolean"
+        },
+        "time": {
+          "description": "Show timestamp in logs",
+          "type": "boolean"
+        }
+      },
+      "type": "object"
+    },
+    "misc": {
+      "description": "Miscellaneous configuration",
+      "properties": {
+        "clean_on_exit": {
+          "description": "Clean tmp directory on exit",
+          "type": "boolean"
+        }
+      },
+      "type": "object"
+    },
+    "root": {
+      "default": ".",
+      "description": "Root directory to watch",
+      "type": "string"
+    },
+    "screen": {
+      "description": "Screen/display configuration",
+      "properties": {
+        "clear_on_rebuild": {
+          "description": "Clear screen on rebuild",
+          "type": "boolean"
+        },
+        "keep_scroll": {
+          "description": "Keep scroll position",
+          "type": "boolean"
+        }
+      },
+      "type": "object"
+    },
+    "testdata_dir": {
+      "default": "testdata",
+      "description": "Directory containing test data",
+      "type": "string"
+    },
+    "tmp_dir": {
+      "default": "tmp",
+      "description": "Directory for temporary files",
+      "type": "string"
+    }
+  },
+  "title": "Air Configuration",
+  "type": "object"
+}
