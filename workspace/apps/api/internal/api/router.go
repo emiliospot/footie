@@ -12,7 +12,7 @@ import (
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 
-	// "github.com/emiliospot/footie/api/internal/api/handlers" // TODO: Update for sqlc
+	"github.com/emiliospot/footie/api/internal/api/handlers"
 	"github.com/emiliospot/footie/api/internal/api/middleware"
 	"github.com/emiliospot/footie/api/internal/config"
 	"github.com/emiliospot/footie/api/internal/infrastructure/logger"
@@ -53,13 +53,15 @@ func NewRouter(cfg *config.Config, pool *pgxpool.Pool, redis *redis.Client, hub 
 	}
 	router.Use(cors.New(corsConfig))
 
+	// Initialize base handler with common dependencies
+	baseHandler := handlers.NewBaseHandler(cfg, pool, redis, logger)
+
+	// Initialize handlers
+	healthHandler := handlers.NewHealthHandler(baseHandler)
+	matchHandler := handlers.NewMatchHandler(baseHandler)
+
 	// Health check endpoint
-	router.GET("/health", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{
-			"status":  "healthy",
-			"version": cfg.App.Version,
-		})
-	})
+	router.GET("/health", healthHandler.Check)
 
 	// WebSocket endpoint for real-time match updates
 	router.GET("/ws/matches/:id", func(c *gin.Context) {
@@ -94,76 +96,35 @@ func NewRouter(cfg *config.Config, pool *pgxpool.Pool, redis *redis.Client, hub 
 		router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	}
 
-	// TODO: Update handlers to use sqlc queries instead of GORM
-	// The handlers need to be refactored to work with sqlc + pgx
-	// For now, we'll just set up the basic routes structure
-
-	// Initialize sqlc queries
-	// queries := sqlc.New(pool)
-
-	// Temporarily commented out until handlers are updated for sqlc
-	/*
-	// Initialize handlers
-	authHandler := handlers.NewAuthHandler(cfg, pool, logger)
-	userHandler := handlers.NewUserHandler(pool, logger)
-	teamHandler := handlers.NewTeamHandler(pool, logger)
-	playerHandler := handlers.NewPlayerHandler(pool, logger)
-	matchHandler := handlers.NewMatchHandler(pool, logger)
-
 	// API v1 routes
 	v1 := router.Group("/api/v1")
-	// Public routes
-	auth := v1.Group("/auth")
-	auth.POST("/register", authHandler.Register)
-	auth.POST("/login", authHandler.Login)
-	auth.POST("/refresh", authHandler.RefreshToken)
 
-	// Protected routes
+	// Public routes (no authentication required)
+	// TODO: Implement auth handler (register, login, refresh)
+	// auth := v1.Group("/auth")
+	// auth.POST("/register", authHandler.Register)
+	// auth.POST("/login", authHandler.Login)
+	// auth.POST("/refresh", authHandler.RefreshToken)
+
+	// Protected routes (authentication required)
+	// For now, we'll make match routes public for development
+	// In production, add: protected.Use(middleware.AuthMiddleware(cfg.JWT.Secret))
 	protected := v1.Group("")
-	protected.Use(middleware.AuthMiddleware(cfg.JWT.Secret))
-
-	// User routes
-	users := protected.Group("/users")
-	users.GET("/me", userHandler.GetCurrentUser)
-	users.PUT("/me", userHandler.UpdateCurrentUser)
-	users.GET("/:id", userHandler.GetUser)
-
-	// Team routes
-	teams := protected.Group("/teams")
-	teams.GET("", teamHandler.ListTeams)
-	teams.GET("/:id", teamHandler.GetTeam)
-	teams.POST("", middleware.RequireRole("analyst"), teamHandler.CreateTeam)
-	teams.PUT("/:id", middleware.RequireRole("analyst"), teamHandler.UpdateTeam)
-	teams.DELETE("/:id", middleware.RequireRole("admin"), teamHandler.DeleteTeam)
-	teams.GET("/:id/players", teamHandler.GetTeamPlayers)
-	teams.GET("/:id/statistics", teamHandler.GetTeamStatistics)
-
-	// Player routes
-	players := protected.Group("/players")
-	players.GET("", playerHandler.ListPlayers)
-	players.GET("/:id", playerHandler.GetPlayer)
-	players.POST("", middleware.RequireRole("analyst"), playerHandler.CreatePlayer)
-	players.PUT("/:id", middleware.RequireRole("analyst"), playerHandler.UpdatePlayer)
-	players.DELETE("/:id", middleware.RequireRole("admin"), playerHandler.DeletePlayer)
-	players.GET("/:id/statistics", playerHandler.GetPlayerStatistics)
+	// protected.Use(middleware.AuthMiddleware(cfg.JWT.Secret))
 
 	// Match routes
 	matches := protected.Group("/matches")
 	matches.GET("", matchHandler.ListMatches)
 	matches.GET("/:id", matchHandler.GetMatch)
-	matches.POST("", middleware.RequireRole("analyst"), matchHandler.CreateMatch)
-	matches.PUT("/:id", middleware.RequireRole("analyst"), matchHandler.UpdateMatch)
-	matches.DELETE("/:id", middleware.RequireRole("admin"), matchHandler.DeleteMatch)
 	matches.GET("/:id/events", matchHandler.GetMatchEvents)
-	matches.POST("/:id/events", middleware.RequireRole("analyst"), matchHandler.CreateMatchEvent)
+	matches.POST("/:id/events", matchHandler.CreateMatchEvent) // TODO: Add RequireRole("analyst")
 
-	// Admin routes
-	admin := protected.Group("/admin")
-	admin.Use(middleware.RequireRole("admin"))
-	admin.GET("/users", userHandler.ListUsers)
-	admin.PUT("/users/:id/role", userHandler.UpdateUserRole)
-	admin.DELETE("/users/:id", userHandler.DeleteUser)
-	*/
+	// TODO: Implement additional handlers
+	// - User handler (users CRUD, profile management)
+	// - Team handler (teams CRUD, statistics)
+	// - Player handler (players CRUD, statistics)
+	// - Auth handler (JWT authentication)
+	// - Admin routes (user management)
 
 	return router
 }

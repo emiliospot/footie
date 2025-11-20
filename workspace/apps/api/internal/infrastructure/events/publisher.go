@@ -187,4 +187,3 @@ func (p *Publisher) InvalidateMatchCache(ctx context.Context, matchID int32) err
 	p.logger.Info("Invalidated match cache", "match_id", matchID)
 	return nil
 }
-

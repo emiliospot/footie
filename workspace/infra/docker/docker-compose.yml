@@ -42,6 +42,24 @@ services:
       timeout: 3s
       retries: 5
 
+  # Redis Commander for Redis GUI (optional)
+  redis-commander:
+    image: rediscommander/redis-commander:latest
+    container_name: footie-redis-commander
+    restart: unless-stopped
+    environment:
+      REDIS_HOSTS: local:redis:6379
+      HTTP_USER: admin
+      HTTP_PASSWORD: admin
+    ports:
+      - "8089:8081"
+    depends_on:
+      - redis
+    networks:
+      - footie-network
+    profiles:
+      - tools
+
   # PgAdmin for database management (optional)
   pgadmin:
     image: dpage/pgadmin4:latest

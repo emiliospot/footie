@@ -156,11 +156,13 @@ Redis Streams → Worker → Analytics → Database
 ```
 
 **Connect to live match updates:**
+
 ```
 ws://localhost:8088/ws/matches/:id
 ```
 
 **Features:**
+
 - 🔴 Sub-100ms latency
 - 📊 100,000+ concurrent clients per instance
 - 🚀 Horizontal scaling ready

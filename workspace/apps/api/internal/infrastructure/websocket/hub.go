@@ -55,7 +55,7 @@ type Client struct {
 
 // Message represents a real-time event message.
 type Message struct {
-	Type      string      `json:"type"`       // "match_event", "score_update", "match_status"
+	Type      string      `json:"type"` // "match_event", "score_update", "match_status"
 	MatchID   int32       `json:"match_id"`
 	Timestamp time.Time   `json:"timestamp"`
 	Data      interface{} `json:"data"`
@@ -195,4 +195,3 @@ func (h *Hub) GetClientCount(matchID int32) int {
 	defer h.mu.RUnlock()
 	return len(h.clients[matchID])
 }
-

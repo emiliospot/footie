@@ -1,6 +1,7 @@
 package database
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/golang-migrate/migrate/v4"
@@ -9,7 +10,7 @@ import (
 )
 
 // RunMigrations runs database migrations.
-func RunMigrations(databaseURL string, migrationsPath string) error {
+func RunMigrations(databaseURL, migrationsPath string) error {
 	m, err := migrate.New(
 		fmt.Sprintf("file://%s", migrationsPath),
 		databaseURL,
@@ -19,7 +20,7 @@ func RunMigrations(databaseURL string, migrationsPath string) error {
 	}
 	defer m.Close()
 
-	if err := m.Up(); err != nil && err != migrate.ErrNoChange {
+	if err := m.Up(); err != nil && !errors.Is(err, migrate.ErrNoChange) {
 		return fmt.Errorf("failed to run migrations: %w", err)
 	}
 
@@ -27,7 +28,7 @@ func RunMigrations(databaseURL string, migrationsPath string) error {
 }
 
 // MigrateDown rolls back the last migration.
-func MigrateDown(databaseURL string, migrationsPath string) error {
+func MigrateDown(databaseURL, migrationsPath string) error {
 	m, err := migrate.New(
 		fmt.Sprintf("file://%s", migrationsPath),
 		databaseURL,
@@ -37,7 +38,7 @@ func MigrateDown(databaseURL string, migrationsPath string) error {
 	}
 	defer m.Close()
 
-	if err := m.Down(); err != nil && err != migrate.ErrNoChange {
+	if err := m.Down(); err != nil && !errors.Is(err, migrate.ErrNoChange) {
 		return fmt.Errorf("failed to rollback migrations: %w", err)
 	}
 
@@ -45,7 +46,7 @@ func MigrateDown(databaseURL string, migrationsPath string) error {
 }
 
 // MigrateReset drops all tables and re-runs migrations.
-func MigrateReset(databaseURL string, migrationsPath string) error {
+func MigrateReset(databaseURL, migrationsPath string) error {
 	m, err := migrate.New(
 		fmt.Sprintf("file://%s", migrationsPath),
 		databaseURL,
@@ -55,14 +56,13 @@ func MigrateReset(databaseURL string, migrationsPath string) error {
 	}
 	defer m.Close()
 
-	if err := m.Drop(); err != nil && err != migrate.ErrNoChange {
+	if err := m.Drop(); err != nil && !errors.Is(err, migrate.ErrNoChange) {
 		return fmt.Errorf("failed to drop database: %w", err)
 	}
 
-	if err := m.Up(); err != nil && err != migrate.ErrNoChange {
+	if err := m.Up(); err != nil && !errors.Is(err, migrate.ErrNoChange) {
 		return fmt.Errorf("failed to run migrations: %w", err)
 	}
 
 	return nil
 }
-

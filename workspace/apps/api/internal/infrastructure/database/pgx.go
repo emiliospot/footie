@@ -38,11 +38,11 @@ func NewPgxPool(ctx context.Context, cfg *PgxConfig) (*pgxpool.Pool, error) {
 	}
 
 	// Configure pool settings for production workloads
-	poolConfig.MaxConns = 25                           // Maximum number of connections
-	poolConfig.MinConns = 5                            // Minimum number of connections
-	poolConfig.MaxConnLifetime = time.Hour             // Max connection lifetime
-	poolConfig.MaxConnIdleTime = 30 * time.Minute     // Max idle time
-	poolConfig.HealthCheckPeriod = time.Minute        // Health check interval
+	poolConfig.MaxConns = 25                               // Maximum number of connections
+	poolConfig.MinConns = 5                                // Minimum number of connections
+	poolConfig.MaxConnLifetime = time.Hour                 // Max connection lifetime
+	poolConfig.MaxConnIdleTime = 30 * time.Minute          // Max idle time
+	poolConfig.HealthCheckPeriod = time.Minute             // Health check interval
 	poolConfig.ConnConfig.ConnectTimeout = 5 * time.Second // Connection timeout
 
 	// Create pool
@@ -59,4 +59,3 @@ func NewPgxPool(ctx context.Context, cfg *PgxConfig) (*pgxpool.Pool, error) {
 
 	return pool, nil
 }
-
