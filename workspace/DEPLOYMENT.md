@@ -33,7 +33,6 @@ terraform --version
 ### AWS Credentials
 
 1. **Create AWS Access Keys**:
-
    - Log in to AWS Console
    - Navigate to IAM → Users → Your User → Security Credentials
    - Create Access Key
@@ -159,8 +158,8 @@ Create `workspace/apps/web/src/environments/environment.prod.ts`:
 ```typescript
 export const environment = {
   production: true,
-  apiUrl: 'https://api.yourdomain.com/api/v1',
-  appName: 'Footie Analytics',
+  apiUrl: "https://api.yourdomain.com/api/v1",
+  appName: "Footie Analytics",
 };
 ```
 
@@ -201,7 +200,6 @@ git push origin main
 ```
 
 2. **Monitor deployment**:
-
    - GitHub Actions → View workflow run
    - AWS ECS → Monitor task status
    - CloudWatch → Check logs
@@ -379,12 +377,10 @@ psql -h <RDS_ENDPOINT> -U footie_admin -d footie
 ### High Response Times
 
 1. **Check RDS performance**:
-
    - CloudWatch → RDS → DatabaseConnections
    - Enable Enhanced Monitoring
 
 2. **Check ElastiCache hit rate**:
-
    - CloudWatch → ElastiCache → CacheHitRate
    - Scale up if needed
 
