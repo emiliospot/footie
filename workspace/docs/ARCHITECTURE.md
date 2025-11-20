@@ -17,7 +17,8 @@ This document describes the complete architecture of the Footie platform, includ
 │  └──────────────┘  └──────────────┘  └──────────────┘                 │
 └─────────────────────────────────────────────────────────────────────────┘
                               │                    │
-                              │ HTTP               │ WS
+                              │ HTTP REST          │ WebSocket
+                              │ (Port 8088)        │ (Port 8088)
                               ▼                    ▼
 ┌─────────────────────────────────────────────────────────────────────────┐
 │                          GOLANG BACKEND (GIN)                            │
@@ -41,7 +42,7 @@ This document describes the complete architecture of the Footie platform, includ
 │  │              DEPENDENCY INJECTION LAYER                        │   │
 │  │  ┌───────────┐  ┌────────────┐  ┌──────────┐  ┌───────────┐ │   │
 │  │  │   sqlc    │  │   Event    │  │  Redis   │  │  Logger   │ │   │
-│  │  │  Queries  │  │ Publisher  │  │  Client  │  │           │ │   │
+│  │  │  Queries  │  │ Publisher  │  │  Client  │  │  (slog)   │ │   │
 │  │  └─────┬─────┘  └─────┬──────┘  └────┬─────┘  └───────────┘ │   │
 │  └────────┼──────────────┼───────────────┼──────────────────────┘   │
 │           │              │               │                           │
@@ -54,38 +55,47 @@ This document describes the complete architecture of the Footie platform, includ
 │  └────────┼────────────┼─────────────┼──────────────┼──────────┘   │
 └───────────┼────────────┼─────────────┼──────────────┼──────────────┘
             │            │             │              │
-            ▲            ▼             ▼              ▼
-            │
-┌───────────┴────────────────────────────────────────────────────────────┐
-│                  EXTERNAL DATA FEEDS (Future)                           │
-│  Opta / StatsBomb / API-Football                                       │
-│  → Webhooks directly to backend                                        │
-│  → Polling from backend workers                                        │
-└─────────────────────────────────────────────────────────────────────────┘
+            │            │             │              │
+            ▼            ▼             ▼              ▼
 ┌─────────────────────────────────────────────────────────────────────────┐
 │                         DATA & CACHE LAYER                               │
 │  ┌──────────────────┐  ┌──────────────────┐  ┌──────────────────┐     │
 │  │ PostgreSQL 16    │  │    Redis 7       │  │ OpenSearch       │     │
-│  │                  │  │                  │  │ (Future)         │     │
-│  │ • Users          │  │ • Cache          │  │                  │     │
-│  │ • Teams          │  │ • Streams        │  │ • Full-text      │     │
-│  │ • Players        │  │ • Pub/Sub        │  │ • Analytics      │     │
-│  │ • Matches        │  │ • Sessions       │  │ • Aggregations   │     │
-│  │ • Match Events   │  │                  │  │ • Heat maps      │     │
-│  │ • Statistics     │  │                  │  │ • Player search  │     │
+│  │ (Port 5432)      │  │ (Port 6379)      │  │ (Future)         │     │
 │  │                  │  │                  │  │                  │     │
-│  │ Source of Truth  │  │ Real-time        │  │ Advanced Search  │     │
-│  └──────────────────┘  └──────────────────┘  └──────────────────┘     │
+│  │ • Users          │  │ • Cache          │  │ • Full-text      │     │
+│  │ • Teams          │  │ • Streams        │  │ • Analytics      │     │
+│  │ • Players        │  │ • Pub/Sub        │  │ • Aggregations   │     │
+│  │ • Matches        │  │ • Sessions       │  │ • Heat maps      │     │
+│  │ • Match Events   │  │                  │  │ • Player search  │     │
+│  │ • Statistics     │  │                  │  │                  │     │
+│  │                  │  │                  │  │                  │     │
+│  │ Source of Truth  │  │ Real-time Msgs   │  │ Advanced Search  │     │
+│  └──────────────────┘  └────────┬─────────┘  └──────────────────┘     │
+└─────────────────────────────────┼──────────────────────────────────────┘
+                                  │
+                                  │ (Future - Phase 3)
+                                  ▼
+                      ┌───────────────────────┐
+                      │  Analytics Worker     │
+                      │  (Go Service)         │
+                      │                       │
+                      │  Redis Streams →      │
+                      │  → OpenSearch Index   │
+                      └───────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────────┐
+│                  EXTERNAL DATA FEEDS (Future - Phase 2)                  │
+│                                                                          │
+│  Opta / StatsBomb / API-Football / Football-Data.org                    │
+│                                                                          │
+│  Integration Methods:                                                   │
+│  • Webhooks → POST /api/v1/webhooks/match-events                       │
+│  • Polling  → Backend workers fetch from external APIs                  │
+│  • WebSocket → Real-time feed connections                               │
+│                                                                          │
+│  Flow: External Feed → Backend → PostgreSQL → Redis → Clients          │
 └─────────────────────────────────────────────────────────────────────────┘
-                                    │
-                                    ▼
-                        ┌───────────────────────┐
-                        │  Analytics Worker     │
-                        │  (Future - Phase 3)   │
-                        │                       │
-                        │  Redis Streams →      │
-                        │  → OpenSearch Index   │
-                        └───────────────────────┘
 ```
 
 ---
