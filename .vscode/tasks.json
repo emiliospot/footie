@@ -1,0 +1,495 @@
+{
+  "tasks": [
+    // ==========================================
+    // KILL TASKS
+    // ==========================================
+    {
+      "type": "shell",
+      "label": "Kill: Backend (Air + API)",
+      "command": "pkill -9 -f 'air|nx run api:serve' && echo '✅ Killed backend processes' || echo 'ℹ️  No backend processes running'",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    },
+    {
+      "type": "shell",
+      "label": "Kill: Frontend (Angular)",
+      "command": "pkill -9 -f 'nx run web:serve|ng serve' && echo '✅ Killed frontend processes' || echo 'ℹ️  No frontend processes running'",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    },
+    {
+      "type": "shell",
+      "label": "Kill: All Dev Servers",
+      "command": "pkill -9 -f 'air|nx run|ng serve' && echo '✅ Killed all dev servers' || echo 'ℹ️  No dev servers running'",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    },
+    {
+      "type": "shell",
+      "label": "Kill: Stuck Lint Processes",
+      "command": "pkill -9 -f 'nx run-many.*lint|golangci-lint' && echo '✅ Killed lint processes' || echo 'ℹ️  No lint processes running'",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    },
+    {
+      "type": "shell",
+      "label": "Kill: Docker Containers on Port 8081",
+      "command": "docker ps --filter 'publish=8081' --format '{{.ID}}' | xargs -r docker stop && echo '✅ Stopped Docker containers using port 8081' || echo 'ℹ️  No Docker containers on port 8081'",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    },
+    {
+      "type": "shell",
+      "label": "Kill: Everything (Nuclear Option)",
+      "command": "pkill -9 -f 'air|nx|ng serve|golangci-lint' && echo '💥 Killed all Node/Go dev processes' || echo 'ℹ️  Nothing to kill'",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    },
+
+    // ==========================================
+    // DEVELOPMENT TASKS
+    // ==========================================
+    {
+      "command": "npm run dev",
+      "label": "Dev: Start All",
+      "options": {
+        "cwd": "${workspaceFolder}/workspace"
+      },
+      "presentation": {
+        "echo": true,
+        "focus": false,
+        "panel": "dedicated",
+        "reveal": "always",
+        "showReuseMessage": false
+      },
+      "problemMatcher": [],
+      "type": "shell"
+    },
+    {
+      "command": "npm run api",
+      "label": "Dev: Backend Only",
+      "options": {
+        "cwd": "${workspaceFolder}/workspace"
+      },
+      "presentation": {
+        "echo": true,
+        "focus": false,
+        "panel": "dedicated",
+        "reveal": "always"
+      },
+      "problemMatcher": [],
+      "type": "shell"
+    },
+    {
+      "command": "npm run web",
+      "label": "Dev: Frontend Only",
+      "options": {
+        "cwd": "${workspaceFolder}/workspace"
+      },
+      "presentation": {
+        "echo": true,
+        "focus": false,
+        "panel": "dedicated",
+        "reveal": "always"
+      },
+      "problemMatcher": [],
+      "type": "shell"
+    },
+    // ==========================================
+    // DOCKER TASKS
+    // ==========================================
+    {
+      "command": "npm run docker:up",
+      "label": "Docker: Start Infrastructure",
+      "options": {
+        "cwd": "${workspaceFolder}/workspace"
+      },
+      "presentation": {
+        "echo": true,
+        "focus": false,
+        "panel": "shared",
+        "reveal": "always"
+      },
+      "problemMatcher": [],
+      "type": "shell"
+    },
+    {
+      "command": "npm run docker:down",
+      "label": "Docker: Stop Infrastructure",
+      "options": {
+        "cwd": "${workspaceFolder}/workspace"
+      },
+      "presentation": {
+        "echo": true,
+        "focus": false,
+        "panel": "shared",
+        "reveal": "always"
+      },
+      "problemMatcher": [],
+      "type": "shell"
+    },
+    {
+      "command": "npm run docker:logs",
+      "label": "Docker: View Logs",
+      "options": {
+        "cwd": "${workspaceFolder}/workspace"
+      },
+      "presentation": {
+        "echo": true,
+        "focus": true,
+        "panel": "dedicated",
+        "reveal": "always"
+      },
+      "problemMatcher": [],
+      "type": "shell"
+    },
+    // ==========================================
+    // BUILD TASKS
+    // ==========================================
+    {
+      "command": "npm run build",
+      "group": {
+        "isDefault": true,
+        "kind": "build"
+      },
+      "label": "Build: All",
+      "options": {
+        "cwd": "${workspaceFolder}/workspace"
+      },
+      "presentation": {
+        "echo": true,
+        "focus": false,
+        "panel": "shared",
+        "reveal": "always"
+      },
+      "problemMatcher": [],
+      "type": "shell"
+    },
+    {
+      "command": "npm run build:api",
+      "group": "build",
+      "label": "Build: Backend",
+      "options": {
+        "cwd": "${workspaceFolder}/workspace"
+      },
+      "presentation": {
+        "echo": true,
+        "focus": false,
+        "panel": "shared",
+        "reveal": "always"
+      },
+      "problemMatcher": ["$go"],
+      "type": "shell"
+    },
+    {
+      "command": "npm run build:web",
+      "group": "build",
+      "label": "Build: Frontend",
+      "options": {
+        "cwd": "${workspaceFolder}/workspace"
+      },
+      "presentation": {
+        "echo": true,
+        "focus": false,
+        "panel": "shared",
+        "reveal": "always"
+      },
+      "problemMatcher": ["$tsc"],
+      "type": "shell"
+    },
+    // ==========================================
+    // TEST TASKS
+    // ==========================================
+    {
+      "command": "npm test",
+      "group": {
+        "isDefault": true,
+        "kind": "test"
+      },
+      "label": "Test: All",
+      "options": {
+        "cwd": "${workspaceFolder}/workspace"
+      },
+      "presentation": {
+        "echo": true,
+        "focus": false,
+        "panel": "shared",
+        "reveal": "always"
+      },
+      "problemMatcher": [],
+      "type": "shell"
+    },
+    {
+      "command": "npm run test:api",
+      "group": "test",
+      "label": "Test: Backend Unit",
+      "options": {
+        "cwd": "${workspaceFolder}/workspace"
+      },
+      "presentation": {
+        "echo": true,
+        "focus": false,
+        "panel": "shared",
+        "reveal": "always"
+      },
+      "problemMatcher": ["$go"],
+      "type": "shell"
+    },
+    {
+      "command": "npm run test:api:integration",
+      "group": "test",
+      "label": "Test: Backend Integration",
+      "options": {
+        "cwd": "${workspaceFolder}/workspace"
+      },
+      "presentation": {
+        "echo": true,
+        "focus": false,
+        "panel": "shared",
+        "reveal": "always"
+      },
+      "problemMatcher": ["$go"],
+      "type": "shell"
+    },
+    {
+      "command": "npm run test:web",
+      "group": "test",
+      "label": "Test: Frontend",
+      "options": {
+        "cwd": "${workspaceFolder}/workspace"
+      },
+      "presentation": {
+        "echo": true,
+        "focus": false,
+        "panel": "shared",
+        "reveal": "always"
+      },
+      "problemMatcher": [],
+      "type": "shell"
+    },
+    {
+      "command": "npm run test:e2e",
+      "group": "test",
+      "label": "Test: E2E",
+      "options": {
+        "cwd": "${workspaceFolder}/workspace"
+      },
+      "presentation": {
+        "echo": true,
+        "focus": false,
+        "panel": "shared",
+        "reveal": "always"
+      },
+      "problemMatcher": [],
+      "type": "shell"
+    },
+    // ==========================================
+    // LINT TASKS
+    // ==========================================
+    {
+      "command": "npm run lint",
+      "label": "Lint: All",
+      "options": {
+        "cwd": "${workspaceFolder}/workspace"
+      },
+      "presentation": {
+        "echo": true,
+        "focus": false,
+        "panel": "shared",
+        "reveal": "always"
+      },
+      "problemMatcher": ["$eslint-stylish", "$go"],
+      "type": "shell"
+    },
+    {
+      "command": "npm run lint:fix",
+      "label": "Lint: Fix All",
+      "options": {
+        "cwd": "${workspaceFolder}/workspace"
+      },
+      "presentation": {
+        "echo": true,
+        "focus": false,
+        "panel": "shared",
+        "reveal": "always"
+      },
+      "problemMatcher": [],
+      "type": "shell"
+    },
+    {
+      "command": "npm run lint:api",
+      "label": "Lint: Backend",
+      "options": {
+        "cwd": "${workspaceFolder}/workspace"
+      },
+      "presentation": {
+        "echo": true,
+        "focus": false,
+        "panel": "shared",
+        "reveal": "always"
+      },
+      "problemMatcher": ["$go"],
+      "type": "shell"
+    },
+    {
+      "command": "npm run lint:web",
+      "label": "Lint: Frontend",
+      "options": {
+        "cwd": "${workspaceFolder}/workspace"
+      },
+      "presentation": {
+        "echo": true,
+        "focus": false,
+        "panel": "shared",
+        "reveal": "always"
+      },
+      "problemMatcher": ["$eslint-stylish"],
+      "type": "shell"
+    },
+    // ==========================================
+    // TYPECHECK TASKS
+    // ==========================================
+    {
+      "command": "npm run typecheck",
+      "label": "TypeCheck: Frontend",
+      "options": {
+        "cwd": "${workspaceFolder}/workspace"
+      },
+      "presentation": {
+        "echo": true,
+        "focus": false,
+        "panel": "shared",
+        "reveal": "always"
+      },
+      "problemMatcher": ["$tsc"],
+      "type": "shell"
+    },
+    // ==========================================
+    // NX TASKS
+    // ==========================================
+    {
+      "command": "npx nx graph",
+      "label": "Nx: Show Graph",
+      "options": {
+        "cwd": "${workspaceFolder}/workspace"
+      },
+      "presentation": {
+        "echo": true,
+        "focus": false,
+        "panel": "shared",
+        "reveal": "always"
+      },
+      "problemMatcher": [],
+      "type": "shell"
+    },
+    {
+      "command": "npx nx affected:test",
+      "label": "Nx: Affected Test",
+      "options": {
+        "cwd": "${workspaceFolder}/workspace"
+      },
+      "presentation": {
+        "echo": true,
+        "focus": false,
+        "panel": "shared",
+        "reveal": "always"
+      },
+      "problemMatcher": [],
+      "type": "shell"
+    },
+    {
+      "command": "npx nx affected:build",
+      "label": "Nx: Affected Build",
+      "options": {
+        "cwd": "${workspaceFolder}/workspace"
+      },
+      "presentation": {
+        "echo": true,
+        "focus": false,
+        "panel": "shared",
+        "reveal": "always"
+      },
+      "problemMatcher": [],
+      "type": "shell"
+    },
+    // ==========================================
+    // GO-SPECIFIC TASKS
+    // ==========================================
+    {
+      "command": "go mod download && go mod tidy",
+      "label": "Go: Install Dependencies",
+      "options": {
+        "cwd": "${workspaceFolder}/workspace/apps/api"
+      },
+      "presentation": {
+        "echo": true,
+        "focus": false,
+        "panel": "shared",
+        "reveal": "always"
+      },
+      "problemMatcher": [],
+      "type": "shell"
+    },
+    {
+      "command": "go test -v -race -coverprofile=coverage.out ./...",
+      "label": "Go: Run Tests with Coverage",
+      "options": {
+        "cwd": "${workspaceFolder}/workspace/apps/api"
+      },
+      "presentation": {
+        "echo": true,
+        "focus": false,
+        "panel": "shared",
+        "reveal": "always"
+      },
+      "problemMatcher": ["$go"],
+      "type": "shell"
+    },
+    {
+      "command": "npm run test:api:bench",
+      "label": "Go: Benchmark",
+      "options": {
+        "cwd": "${workspaceFolder}/workspace"
+      },
+      "presentation": {
+        "echo": true,
+        "focus": false,
+        "panel": "shared",
+        "reveal": "always"
+      },
+      "problemMatcher": [],
+      "type": "shell"
+    }
+  ],
+  "version": "2.0.0"
+}

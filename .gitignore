@@ -5,7 +5,7 @@
 
 # IDEs
 .idea/
-.vscode/
+# .vscode/ - Keep VSCode settings in repo for team consistency
 *.swp
 *.swo
 *~
