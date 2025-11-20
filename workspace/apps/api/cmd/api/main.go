@@ -65,7 +65,7 @@ func main() {
 		Database: cfg.Database.Name,
 		SSLMode:  cfg.Database.SSLMode,
 	}
-	
+
 	pool, err := database.NewPgxPool(ctx, pgxCfg)
 	if err != nil {
 		appLogger.Fatal("Failed to connect to database", "error", err)

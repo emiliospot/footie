@@ -15,13 +15,20 @@ cd apps/api && go mod download && cd ../..
 # 4. Install Air for hot-reload (if not already installed)
 go install github.com/air-verse/air@latest
 
-# 5. Setup environment
+# 5. Install sqlc and migrate tools
+go install github.com/sqlc-dev/sqlc/cmd/sqlc@latest
+go install -tags 'postgres' github.com/golang-migrate/migrate/v4/cmd/migrate@latest
+
+# 6. Setup environment
 cp .env.example .env
 
-# 6. Start infrastructure (PostgreSQL + Redis)
+# 7. Start infrastructure (PostgreSQL + Redis)
 npm run docker:up
 
-# 7. Start development servers (with hot-reload!)
+# 8. Run database migrations
+npm run db:up
+
+# 9. Start development servers (with hot-reload!)
 npm run dev
 ```
 
@@ -30,8 +37,8 @@ npm run dev
 ## 🌐 Access Your App
 
 - **Frontend**: http://localhost:4200
-- **Backend API**: http://localhost:8081
-- **API Docs**: http://localhost:8081/swagger
+- **Backend API**: http://localhost:8088
+- **API Docs**: http://localhost:8088/swagger
 - **PgAdmin**: http://localhost:5050 (optional, with `--profile tools`)
 
 ## 🧪 Verify Everything Works

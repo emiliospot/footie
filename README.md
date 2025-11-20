@@ -47,7 +47,8 @@ footie/
 
 - ⚡ **Air Hot-Reload** for Golang (< 1s rebuild)
 - 🚀 **Angular 19** with HMR
-- 🏗️ **Repository Pattern** (abstracted database layer)
+- 🔥 **sqlc + pgx** - Type-safe SQL with 3-5x faster queries (industry standard for analytics)
+- 🗄️ **golang-migrate** - Production-grade database migrations
 - 🧪 **Comprehensive Testing** (unit, integration, E2E)
 - 📦 **Nx Monorepo** (build caching, affected commands)
 - 🐳 **Docker** ready for local development
@@ -62,7 +63,8 @@ footie/
 
 - **Golang 1.21+** with Gin framework
 - **Air** for hot-reload development
-- **GORM** with repository pattern (easy to swap ORMs)
+- **sqlc + pgx** - Type-safe SQL with fastest PostgreSQL driver (3-5x faster)
+- **golang-migrate** - Production-grade database migrations
 - **PostgreSQL 16** for data storage
 - **Redis 7** for caching
 - **testcontainers-go** for integration tests
@@ -123,6 +125,13 @@ npm run build:web     # Build frontend
 npm run lint          # Lint all
 npm run lint:fix      # Auto-fix issues
 
+# Database Migrations
+npm run db:up         # Run all pending migrations
+npm run db:down       # Rollback last migration
+npm run db:reset      # Drop all & re-run migrations
+npm run db:status     # Check migration version
+npm run sqlc:generate # Generate Go code from SQL
+
 # Docker
 npm run docker:up     # Start PostgreSQL & Redis
 npm run docker:down   # Stop infrastructure
@@ -136,14 +145,16 @@ npx nx affected:test  # Test only affected code
 
 ## 🏗️ Architecture
 
-We use a **hybrid approach**:
+We use a **production-grade approach** for sports analytics:
 
-- **Repository pattern** for data access abstraction
-- **Use cases** for complex business logic
+- **sqlc + pgx** - Type-safe SQL queries (used by betting companies & analytics teams)
+- **golang-migrate** - Version-controlled database migrations
+- **Raw SQL** - Perfect for complex analytics queries (xG, pass accuracy, heat maps)
+- **Repository pattern** - Clean data access abstraction
 - **Clean separation** of concerns
 - **Easy to test** and maintain
 
-The repository pattern makes it trivial to swap from GORM to sqlx, ent, or any other ORM.
+This stack is the industry standard for high-performance analytics applications.
 
 For detailed architectural decisions, see [workspace/docs/ARCHITECTURE.md](workspace/docs/ARCHITECTURE.md).
 

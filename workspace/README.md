@@ -70,6 +70,13 @@ npm run build:web     # Build frontend
 npm run lint          # Lint all
 npm run lint:fix      # Auto-fix issues
 
+# Database Migrations
+npm run db:up         # Run all pending migrations
+npm run db:down       # Rollback last migration
+npm run db:reset      # Drop all & re-run migrations
+npm run db:status     # Check migration version
+npm run sqlc:generate # Generate Go code from SQL
+
 # Docker
 npm run docker:up     # Start PostgreSQL & Redis
 npm run docker:down   # Stop infrastructure
@@ -89,7 +96,8 @@ npx nx affected:build # Build only affected code
 
 - **Golang 1.21+** with Gin framework
 - **Air** for hot-reload development (< 1s rebuild)
-- **GORM** with repository pattern (easy to swap ORMs)
+- **sqlc + pgx v5** - Type-safe SQL with 3-5x faster queries (industry standard)
+- **golang-migrate** - Production-grade database migrations
 - **PostgreSQL 16** for data storage
 - **Redis 7** for caching
 - **testcontainers-go** for integration tests
@@ -115,7 +123,8 @@ npx nx affected:build # Build only affected code
 
 - ⚡ **Air Hot-Reload** - Golang rebuilds in < 1 second
 - 🚀 **Angular 19 HMR** - Instant frontend updates
-- 🏗️ **Repository Pattern** - Abstracted database layer (easy ORM swap)
+- 🔥 **sqlc + pgx** - Type-safe SQL, 3-5x faster (used by betting companies)
+- 🗄️ **golang-migrate** - Version-controlled database migrations
 - 🧪 **Comprehensive Testing** - Unit, integration, and E2E tests
 - 📦 **Nx Monorepo** - Build caching and affected commands
 - 🐳 **Docker Ready** - Local development infrastructure
@@ -125,16 +134,19 @@ npx nx affected:build # Build only affected code
 
 ## 🏗️ Architecture
 
-We use a **hybrid approach** combining:
+We use a **production-grade approach** optimized for sports analytics:
 
-- **Repository pattern** for data access abstraction
-- **Use cases** for complex business logic
+- **sqlc + pgx** - Type-safe SQL queries (industry standard for analytics)
+- **golang-migrate** - Version-controlled database migrations
+- **Raw SQL** - Perfect for complex analytics (xG, pass accuracy, heat maps)
+- **Repository pattern** - Clean data access abstraction
+- **Interface-based design** - Easy testing and mocking
 - **Clean separation** of concerns
-- **Interface-based design** for testability
 
-The repository pattern makes it trivial to swap from GORM to sqlx, ent, or any other ORM without changing business logic.
+This stack is used by betting companies, sports data providers, and real-time analytics systems.
 
-For detailed architectural decisions, see [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
+For detailed architectural decisions, see [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).  
+For sqlc + pgx usage guide, see [apps/api/README_SQLC.md](apps/api/README_SQLC.md).
 
 ---
 

@@ -96,13 +96,13 @@ Example: `internal/repository/sqlc/queries/players.sql`
 
 ```sql
 -- name: GetPlayerShots :many
-SELECT 
+SELECT
     me.*,
     me.metadata->>'xg' as expected_goals,
     me.metadata->>'shot_type' as shot_type
 FROM match_events me
-WHERE me.player_id = $1 
-  AND me.event_type = 'shot' 
+WHERE me.player_id = $1
+  AND me.event_type = 'shot'
   AND me.deleted_at IS NULL
 ORDER BY me.id DESC
 LIMIT $2 OFFSET $3;
@@ -162,17 +162,17 @@ shots, err := queries.GetPlayerShots(ctx, sqlc.GetPlayerShotsParams{
 
 ```sql
 -- name: GetPlayerPassAccuracy :one
-SELECT 
+SELECT
     COUNT(*) FILTER (WHERE metadata->>'completed' = 'true') as completed_passes,
     COUNT(*) as total_passes,
-    CASE 
-        WHEN COUNT(*) > 0 THEN 
+    CASE
+        WHEN COUNT(*) > 0 THEN
             ROUND((COUNT(*) FILTER (WHERE metadata->>'completed' = 'true')::numeric / COUNT(*) * 100), 2)
         ELSE 0
     END as pass_accuracy_percentage
 FROM match_events
-WHERE player_id = $1 
-  AND event_type = 'pass' 
+WHERE player_id = $1
+  AND event_type = 'pass'
   AND deleted_at IS NULL;
 ```
 
@@ -255,4 +255,3 @@ For Docker Compose, migrations run before the API starts.
 ---
 
 Happy coding! ⚽📊
-
