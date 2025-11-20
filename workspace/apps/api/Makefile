@@ -1,7 +1,9 @@
-.PHONY: help run build test lint swagger migrate-up migrate-down migrate-create docker-build
+.PHONY: help run build test lint swagger db-up db-down db-reset db-create docker-build
 
 BINARY_NAME=footie-api
 MAIN_PATH=cmd/api/main.go
+DB_URL=postgres://footie_user:footie_password@localhost:5436/footie?sslmode=disable
+MIGRATIONS_PATH=./migrations
 
 help: ## Show this help
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}'
@@ -12,6 +14,8 @@ install: ## Install dependencies
 	go install github.com/cosmtrek/air@latest
 	go install github.com/swaggo/swag/cmd/swag@latest
 	go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
+	go install github.com/sqlc-dev/sqlc/cmd/sqlc@latest
+	go install -tags 'postgres' github.com/golang-migrate/migrate/v4/cmd/migrate@latest
 
 run: ## Run the application
 	go run $(MAIN_PATH)
@@ -40,14 +44,32 @@ lint-fix: ## Run linter and fix issues
 swagger: ## Generate swagger documentation
 	swag init -g $(MAIN_PATH) -o docs
 
-migrate-up: ## Run database migrations
-	go run cmd/migrate/main.go up
+# Database commands (using golang-migrate)
+db-up: ## Run database migrations
+	migrate -path $(MIGRATIONS_PATH) -database "$(DB_URL)" up
 
-migrate-down: ## Rollback last migration
-	go run cmd/migrate/main.go down
+db-down: ## Rollback last migration
+	migrate -path $(MIGRATIONS_PATH) -database "$(DB_URL)" down 1
 
-migrate-create: ## Create new migration (use: make migrate-create name=migration_name)
-	migrate create -ext sql -dir migrations -seq $(name)
+db-reset: ## Drop all tables and re-run migrations
+	migrate -path $(MIGRATIONS_PATH) -database "$(DB_URL)" drop -f
+	migrate -path $(MIGRATIONS_PATH) -database "$(DB_URL)" up
+
+db-create: ## Create new migration (use: make db-create name=add_xg_field)
+	migrate create -ext sql -dir $(MIGRATIONS_PATH) -seq $(name)
+
+db-status: ## Show migration status
+	migrate -path $(MIGRATIONS_PATH) -database "$(DB_URL)" version
+
+db-force: ## Force migration version (use: make db-force version=1)
+	migrate -path $(MIGRATIONS_PATH) -database "$(DB_URL)" force $(version)
+
+# sqlc commands
+sqlc-generate: ## Generate Go code from SQL
+	sqlc generate
+
+sqlc-vet: ## Vet SQL queries
+	sqlc vet
 
 seed: ## Seed database
 	go run cmd/seed/main.go
@@ -79,4 +101,3 @@ deps-update: ## Update dependencies
 	go mod tidy
 
 .DEFAULT_GOAL := help
-

@@ -48,18 +48,30 @@ func main() {
 	appLogger := logger.NewLogger(cfg.Log.Level, cfg.Log.Format)
 	appLogger.Info("Starting Footie API", "version", cfg.App.Version, "environment", cfg.App.Environment)
 
-	// Initialize database
-	db, err := database.NewPostgresDB(&cfg.Database)
+	// Run database migrations first
+	appLogger.Info("Running database migrations...")
+	if migErr := database.RunMigrations(cfg.Database.URL, "migrations"); migErr != nil {
+		appLogger.Fatal("Failed to run migrations", "error", migErr)
+	}
+	appLogger.Info("Database migrations completed successfully")
+
+	// Initialize pgx connection pool
+	ctx := context.Background()
+	pgxCfg := &database.PgxConfig{
+		Host:     cfg.Database.Host,
+		Port:     cfg.Database.Port,
+		User:     cfg.Database.User,
+		Password: cfg.Database.Password,
+		Database: cfg.Database.Name,
+		SSLMode:  cfg.Database.SSLMode,
+	}
+	
+	pool, err := database.NewPgxPool(ctx, pgxCfg)
 	if err != nil {
 		appLogger.Fatal("Failed to connect to database", "error", err)
 	}
-	appLogger.Info("Database connected successfully")
-
-	// Run migrations
-	if migErr := database.RunMigrations(db); migErr != nil {
-		appLogger.Fatal("Failed to run migrations", "error", migErr)
-	}
-	appLogger.Info("Database migrations completed")
+	defer pool.Close()
+	appLogger.Info("Database connected successfully", "max_conns", pool.Config().MaxConns)
 
 	// Initialize Redis
 	redisClient, err := redis.NewRedisClient(cfg.Redis)
@@ -69,7 +81,7 @@ func main() {
 	appLogger.Info("Redis connected successfully")
 
 	// Initialize router
-	router := api.NewRouter(cfg, db, redisClient, appLogger)
+	router := api.NewRouter(cfg, pool, redisClient, appLogger)
 
 	// Create HTTP server
 	srv := &http.Server{
@@ -103,11 +115,8 @@ func main() {
 		appLogger.Fatal("Server forced to shutdown", "error", shutdownErr)
 	}
 
-	// Close database connection
-	sqlDB, err := db.DB()
-	if err == nil {
-		sqlDB.Close()
-	}
+	// Close database connection pool
+	pool.Close()
 
 	// Close Redis connection
 	if err := redisClient.Close(); err != nil {
