@@ -1,0 +1,168 @@
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  # Lint and test all affected projects
+  test:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [20.x]
+        go-version: [1.21.x]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: "npm"
+          cache-dependency-path: workspace/package-lock.json
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: ${{ matrix.go-version }}
+          cache-dependency-path: workspace/apps/api/go.sum
+
+      - name: Install dependencies
+        working-directory: workspace
+        run: npm ci
+
+      - name: Install Go dependencies
+        working-directory: workspace/apps/api
+        run: go mod download
+
+      - name: Derive appropriate SHAs for base and head
+        uses: nrwl/nx-set-shas@v4
+
+      - name: Lint affected projects
+        working-directory: workspace
+        run: npx nx affected --target=lint --parallel=3
+
+      - name: TypeCheck all projects
+        working-directory: workspace
+        run: npm run typecheck
+
+      - name: Test affected projects
+        working-directory: workspace
+        run: npx nx affected --target=test --parallel=3 --ci --code-coverage
+
+      - name: Build affected projects
+        working-directory: workspace
+        run: npx nx affected --target=build --parallel=3
+
+  # Backend integration tests
+  integration-tests:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: footie_test
+          POSTGRES_USER: footie_user
+          POSTGRES_PASSWORD: footie_test_password
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+      redis:
+        image: redis:7-alpine
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 6379:6379
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: 1.21.x
+          cache-dependency-path: workspace/apps/api/go.sum
+
+      - name: Install Go dependencies
+        working-directory: workspace/apps/api
+        run: go mod download
+
+      - name: Run integration tests
+        working-directory: workspace/apps/api
+        env:
+          DATABASE_HOST: localhost
+          DATABASE_PORT: 5432
+          DATABASE_NAME: footie_test
+          DATABASE_USER: footie_user
+          DATABASE_PASSWORD: footie_test_password
+          REDIS_HOST: localhost
+          REDIS_PORT: 6379
+        run: go test -v -tags=integration ./internal/...
+
+  # E2E tests
+  e2e-tests:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [20.x]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: "npm"
+          cache-dependency-path: workspace/package-lock.json
+
+      - name: Install dependencies
+        working-directory: workspace
+        run: npm ci
+
+      - name: Install Playwright browsers
+        working-directory: workspace
+        run: npx playwright install --with-deps
+
+      - name: Start services
+        working-directory: workspace
+        run: |
+          docker compose -f infra/docker/docker-compose.yml up -d
+          sleep 10
+
+      - name: Run E2E tests
+        working-directory: workspace
+        run: npx nx run web-e2e:e2e
+
+      - name: Upload Playwright report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: playwright-report
+          path: workspace/apps/web-e2e/playwright-report/
+          retention-days: 30
+
+      - name: Stop services
+        if: always()
+        working-directory: workspace
+        run: docker compose -f infra/docker/docker-compose.yml down

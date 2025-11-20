@@ -1,0 +1,109 @@
+{
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "name": "web",
+  "prefix": "app",
+  "projectType": "application",
+  "sourceRoot": "apps/web/src",
+  "tags": ["type:app", "lang:ts", "scope:frontend"],
+  "targets": {
+    "build": {
+      "configurations": {
+        "development": {
+          "extractLicenses": false,
+          "namedChunks": true,
+          "optimization": false,
+          "sourceMap": true
+        },
+        "production": {
+          "budgets": [
+            {
+              "maximumError": "5MB",
+              "maximumWarning": "2MB",
+              "type": "initial"
+            }
+          ],
+          "extractLicenses": true,
+          "namedChunks": false,
+          "optimization": true,
+          "outputHashing": "all",
+          "sourceMap": false
+        }
+      },
+      "defaultConfiguration": "production",
+      "executor": "@angular-devkit/build-angular:application",
+      "options": {
+        "assets": ["apps/web/src/assets"],
+        "browser": "apps/web/src/main.ts",
+        "index": "apps/web/src/index.html",
+        "outputPath": "dist/web",
+        "polyfills": ["zone.js"],
+        "scripts": [],
+        "styles": ["apps/web/src/styles.scss"],
+        "tsConfig": "apps/web/tsconfig.app.json"
+      },
+      "outputs": ["{workspaceRoot}/dist/web"]
+    },
+    "lint": {
+      "executor": "@angular-eslint/builder:lint",
+      "options": {
+        "lintFilePatterns": ["apps/web/src/**/*.ts", "apps/web/src/**/*.html"]
+      }
+    },
+    "lint:fix": {
+      "executor": "@angular-eslint/builder:lint",
+      "options": {
+        "fix": true,
+        "lintFilePatterns": ["apps/web/src/**/*.ts", "apps/web/src/**/*.html"]
+      }
+    },
+    "serve": {
+      "configurations": {
+        "development": {
+          "buildTarget": "web:build:development"
+        },
+        "production": {
+          "buildTarget": "web:build:production"
+        }
+      },
+      "defaultConfiguration": "development",
+      "executor": "@angular-devkit/build-angular:dev-server",
+      "options": {
+        "buildTarget": "web:build",
+        "host": "0.0.0.0",
+        "port": 4200
+      }
+    },
+    "test": {
+      "executor": "@angular-devkit/build-angular:karma",
+      "options": {
+        "assets": ["apps/web/src/assets"],
+        "browsers": "ChromeHeadless",
+        "codeCoverage": true,
+        "karmaConfig": "apps/web/karma.conf.js",
+        "main": "apps/web/src/test.ts",
+        "polyfills": ["zone.js", "zone.js/testing"],
+        "scripts": [],
+        "styles": ["apps/web/src/styles.scss"],
+        "tsConfig": "apps/web/tsconfig.spec.json"
+      }
+    },
+    "test:watch": {
+      "executor": "@angular-devkit/build-angular:karma",
+      "options": {
+        "browsers": "Chrome",
+        "karmaConfig": "apps/web/karma.conf.js",
+        "main": "apps/web/src/test.ts",
+        "polyfills": ["zone.js", "zone.js/testing"],
+        "tsConfig": "apps/web/tsconfig.spec.json",
+        "watch": true
+      }
+    },
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "tsc --noEmit -p apps/web/tsconfig.app.json",
+        "cwd": "{workspaceRoot}"
+      }
+    }
+  }
+}

@@ -1,0 +1,68 @@
+{
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "name": "api",
+  "projectType": "application",
+  "sourceRoot": "apps/api",
+  "tags": ["type:app", "lang:go", "scope:backend"],
+  "targets": {
+    "bench": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "cd apps/api && go test ./... -bench=. -benchmem -run=^$ -v",
+        "cwd": "."
+      }
+    },
+    "build": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "cd apps/api && go build -o ../../dist/api/main cmd/api/main.go",
+        "cwd": "."
+      },
+      "outputs": ["{workspaceRoot}/dist/api"]
+    },
+    "docker:build": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "docker build -t footie-api:latest apps/api",
+        "cwd": "."
+      }
+    },
+    "lint": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "cd apps/api && golangci-lint run --config .golangci.yml --allow-parallel-runners",
+        "cwd": "."
+      }
+    },
+    "lint:fix": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "cd apps/api && golangci-lint run --config .golangci.yml --fix --allow-parallel-runners",
+        "cwd": "."
+      }
+    },
+    "serve": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "cd apps/api && air",
+        "cwd": "."
+      }
+    },
+    "test": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "cd apps/api && go test ./... -v -race -coverprofile=../../coverage/api/coverage.out",
+        "cwd": "."
+      },
+      "outputs": ["{workspaceRoot}/coverage/api"]
+    },
+    "test:integration": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "cd apps/api && go test ./... -v -tags=integration -coverprofile=../../coverage/api/integration.out",
+        "cwd": "."
+      },
+      "outputs": ["{workspaceRoot}/coverage/api"]
+    }
+  }
+}

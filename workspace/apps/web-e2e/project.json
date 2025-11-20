@@ -1,0 +1,44 @@
+{
+  "name": "web-e2e",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/web-e2e/src",
+  "projectType": "application",
+  "targets": {
+    "e2e": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "cd apps/web-e2e && npx playwright test",
+        "cwd": "."
+      }
+    },
+    "e2e:ui": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "cd apps/web-e2e && npx playwright test --ui",
+        "cwd": "."
+      }
+    },
+    "e2e:debug": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "cd apps/web-e2e && npx playwright test --debug",
+        "cwd": "."
+      }
+    },
+    "e2e:headed": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "cd apps/web-e2e && npx playwright test --headed",
+        "cwd": "."
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint",
+      "options": {
+        "lintFilePatterns": ["apps/web-e2e/**/*.ts"]
+      }
+    }
+  },
+  "implicitDependencies": ["web", "api"],
+  "tags": ["type:e2e", "scope:testing"]
+}

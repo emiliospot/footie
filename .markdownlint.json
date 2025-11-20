@@ -1,0 +1,21 @@
+{
+  "MD013": false,
+  "MD024": false,
+  "MD029": false,
+  "MD033": false,
+  "MD034": false,
+  "MD036": false,
+  "MD040": false,
+  "MD041": false,
+  "MD051": false,
+  "default": true,
+  "fenced-code-language": false,
+  "first-line-heading": false,
+  "line-length": false,
+  "link-fragments": false,
+  "no-bare-urls": false,
+  "no-duplicate-heading": false,
+  "no-emphasis-as-heading": false,
+  "no-inline-html": false,
+  "ol-prefix": false
+}
