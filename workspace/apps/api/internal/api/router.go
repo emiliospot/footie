@@ -5,19 +5,19 @@ import (
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/redis/go-redis/v9"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
-	"gorm.io/gorm"
 
-	"github.com/emiliospot/footie/api/internal/api/handlers"
+	// "github.com/emiliospot/footie/api/internal/api/handlers" // TODO: Update for sqlc
 	"github.com/emiliospot/footie/api/internal/api/middleware"
 	"github.com/emiliospot/footie/api/internal/config"
 	"github.com/emiliospot/footie/api/internal/infrastructure/logger"
 )
 
 // NewRouter creates and configures the HTTP router.
-func NewRouter(cfg *config.Config, db *gorm.DB, redis *redis.Client, logger *logger.Logger) *gin.Engine {
+func NewRouter(cfg *config.Config, pool *pgxpool.Pool, redis *redis.Client, logger *logger.Logger) *gin.Engine {
 	// Set Gin mode
 	if cfg.IsProduction() {
 		gin.SetMode(gin.ReleaseMode)
@@ -54,12 +54,21 @@ func NewRouter(cfg *config.Config, db *gorm.DB, redis *redis.Client, logger *log
 		router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	}
 
+	// TODO: Update handlers to use sqlc queries instead of GORM
+	// The handlers need to be refactored to work with sqlc + pgx
+	// For now, we'll just set up the basic routes structure
+	
+	// Initialize sqlc queries
+	// queries := sqlc.New(pool)
+	
+	// Temporarily commented out until handlers are updated for sqlc
+	/*
 	// Initialize handlers
-	authHandler := handlers.NewAuthHandler(cfg, db, logger)
-	userHandler := handlers.NewUserHandler(db, logger)
-	teamHandler := handlers.NewTeamHandler(db, logger)
-	playerHandler := handlers.NewPlayerHandler(db, logger)
-	matchHandler := handlers.NewMatchHandler(db, logger)
+	authHandler := handlers.NewAuthHandler(cfg, pool, logger)
+	userHandler := handlers.NewUserHandler(pool, logger)
+	teamHandler := handlers.NewTeamHandler(pool, logger)
+	playerHandler := handlers.NewPlayerHandler(pool, logger)
+	matchHandler := handlers.NewMatchHandler(pool, logger)
 
 	// API v1 routes
 	v1 := router.Group("/api/v1")
@@ -114,6 +123,7 @@ func NewRouter(cfg *config.Config, db *gorm.DB, redis *redis.Client, logger *log
 	admin.GET("/users", userHandler.ListUsers)
 	admin.PUT("/users/:id/role", userHandler.UpdateUserRole)
 	admin.DELETE("/users/:id", userHandler.DeleteUser)
+	*/
 
 	return router
 }
