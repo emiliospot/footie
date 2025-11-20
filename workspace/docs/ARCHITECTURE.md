@@ -681,6 +681,12 @@ workspace/apps/api/
 - [API-Football](https://www.api-football.com/)
 - [Football-Data.org](https://www.football-data.org/)
 
+### Search & Analytics
+
+- [Amazon OpenSearch Service](https://aws.amazon.com/opensearch-service/)
+- [OpenSearch Documentation](https://opensearch.org/docs/)
+- [Elasticsearch Guide](https://www.elastic.co/guide/index.html)
+
 ---
 
 **Last Updated:** November 2024
