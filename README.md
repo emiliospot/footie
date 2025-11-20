@@ -123,6 +123,7 @@ footie/
 - **GitHub Actions** for CI/CD
 
 **AWS Services (Production):**
+
 - **AWS Lambda** - Serverless webhook processing
 - **AWS Kinesis** - Event streaming (1000s events/sec)
 - **AWS OpenSearch** - Analytics engine (Phase 3)
@@ -134,27 +135,34 @@ footie/
 
 ## 📚 Documentation
 
-### Getting Started
+### 🚀 Getting Started
 
 - **[workspace/README.md](workspace/README.md)** - Complete monorepo guide
-- **[workspace/docs/QUICKSTART.md](workspace/docs/QUICKSTART.md)** - 3-minute setup
-- **[workspace/docs/ARCHITECTURE.md](workspace/docs/ARCHITECTURE.md)** - Architecture decisions
+- **[workspace/docs/QUICKSTART.md](workspace/docs/QUICKSTART.md)** - 3-minute setup guide
+- **[workspace/docs/ARCHITECTURE.md](workspace/docs/ARCHITECTURE.md)** - System architecture with diagrams
 - **[workspace/docs/DEPLOYMENT.md](workspace/docs/DEPLOYMENT.md)** - AWS deployment guide
 
-### Backend Guides
+### 🔧 Backend Guides
 
-- **[workspace/apps/api/README_SQLC.md](workspace/apps/api/README_SQLC.md)** - sqlc + pgx + golang-migrate guide
+- **[workspace/apps/api/README_SQLC.md](workspace/apps/api/README_SQLC.md)** - sqlc + pgx + golang-migrate complete guide
 - **[workspace/apps/api/REALTIME_ARCHITECTURE.md](workspace/apps/api/REALTIME_ARCHITECTURE.md)** - WebSocket + Redis Streams architecture
 - **[workspace/apps/api/MIGRATION_STATUS.md](workspace/apps/api/MIGRATION_STATUS.md)** - GORM → sqlc migration tracker
 
-### Advanced Features (Future)
+### 🎯 Product & Strategy
 
-- **[workspace/docs/MATCH_DATA_FEEDS.md](workspace/docs/MATCH_DATA_FEEDS.md)** - External data feed integration (Phase 2)
-- **[workspace/docs/OPENSEARCH_INTEGRATION.md](workspace/docs/OPENSEARCH_INTEGRATION.md)** - Analytics engine with OpenSearch (Phase 3)
+- **[PM_INVITATION.md](PM_INVITATION.md)** - Product manager onboarding & project overview
+- **[workspace/docs/TECH_STACK_PRESENTATION.md](workspace/docs/TECH_STACK_PRESENTATION.md)** - Complete technical overview for stakeholders
+- **[workspace/docs/TECH_IMPROVEMENTS_ROADMAP.md](workspace/docs/TECH_IMPROVEMENTS_ROADMAP.md)** - Post-MVP enhancements & phased rollout
 
-### Testing
+### 🔮 Advanced Features (Phase 2+)
 
-- **[workspace/docs/TESTING_STRATEGY.md](workspace/docs/TESTING_STRATEGY.md)** - Testing approach
+- **[workspace/docs/MATCH_DATA_FEEDS.md](workspace/docs/MATCH_DATA_FEEDS.md)** - External data feed integration (Opta, StatsBomb, API-Football)
+- **[workspace/docs/OPENSEARCH_INTEGRATION.md](workspace/docs/OPENSEARCH_INTEGRATION.md)** - Analytics engine with AWS OpenSearch (Phase 3)
+
+### 🧪 Testing & CI/CD
+
+- **[workspace/docs/TESTING_STRATEGY.md](workspace/docs/TESTING_STRATEGY.md)** - Comprehensive testing approach
+- **[workspace/docs/CI_CD_FIX.md](workspace/docs/CI_CD_FIX.md)** - CI/CD troubleshooting & test strategy
 
 ---
 
@@ -249,22 +257,27 @@ We use a **production-grade approach** for sports analytics:
 ### Future Enhancements
 
 **Phase 2: External Data Feeds (AWS-Native)**
+
 ```
 External Feeds → API Gateway → Lambda → Kinesis → Go Consumers
 ```
+
 - AWS Lambda for serverless webhook processing
 - AWS Kinesis for high-throughput event streaming (1000s events/sec)
 - Auto-scaling and replay capability
 
 **Phase 3: Analytics Engine (Production Scale)**
+
 ```
 Events → Kinesis → Go Consumer → OpenSearch
 ```
+
 - AWS OpenSearch for advanced analytics (heat maps, xG trends, player similarity)
 - Real-time dashboards with millisecond aggregations
 - Full-text search and fuzzy matching
 
 **The Perfect Trio:**
+
 - **PostgreSQL** - Source of truth (CRUD, transactions)
 - **Redis** - Real-time messaging (WebSocket, pub/sub)
 - **OpenSearch** - Analytics & search (complex queries, ML)
