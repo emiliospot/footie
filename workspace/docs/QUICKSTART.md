@@ -22,7 +22,7 @@ go install -tags 'postgres' github.com/golang-migrate/migrate/v4/cmd/migrate@lat
 # 6. Setup environment
 cp .env.example .env
 
-# 7. Start infrastructure (PostgreSQL + Redis)
+# 7. Start infrastructure (PostgreSQL 16 + Redis 8)
 npm run docker:up
 
 # 8. Run database migrations

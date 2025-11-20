@@ -99,7 +99,7 @@ npx nx affected:build # Build only affected code
 - **sqlc + pgx v5** - Type-safe SQL with 3-5x faster queries (industry standard)
 - **golang-migrate** - Production-grade database migrations
 - **PostgreSQL 16** for data storage
-- **Redis 7** for caching & real-time events (Streams + Pub/Sub)
+- **Redis 8** for caching & real-time events (Streams + Pub/Sub)
 - **WebSockets** (Gorilla WebSocket) - Real-time match updates
 - **Redis Commander** - GUI for Redis debugging (port 8089)
 - **testcontainers-go** for integration tests

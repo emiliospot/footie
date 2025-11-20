@@ -67,7 +67,7 @@ footie/
 - **sqlc + pgx** - Type-safe SQL with fastest PostgreSQL driver (3-5x faster)
 - **golang-migrate** - Production-grade database migrations
 - **PostgreSQL 16** for data storage
-- **Redis 7** for caching & real-time events (Streams + Pub/Sub)
+- **Redis 8** for caching & real-time events (Streams + Pub/Sub)
 - **WebSockets** for real-time match updates (Gorilla WebSocket)
 - **testcontainers-go** for integration tests
 

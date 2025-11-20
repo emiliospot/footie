@@ -60,7 +60,7 @@ This document describes the complete architecture of the Footie platform, includ
 ┌─────────────────────────────────────────────────────────────────────────┐
 │                         DATA & CACHE LAYER                               │
 │  ┌──────────────────┐  ┌──────────────────┐  ┌──────────────────┐     │
-│  │ PostgreSQL 16    │  │    Redis 7       │  │ OpenSearch       │     │
+│  │ PostgreSQL 16    │  │    Redis 8       │  │ OpenSearch       │     │
 │  │ (Port 5432)      │  │ (Port 6379)      │  │ (Future)         │     │
 │  │                  │  │                  │  │                  │     │
 │  │ • Users          │  │ • Cache          │  │ • Full-text      │     │
