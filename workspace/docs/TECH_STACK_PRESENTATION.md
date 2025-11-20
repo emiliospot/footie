@@ -1,6 +1,6 @@
 # ⚽ Footie - Technical Architecture & Stack Presentation
 
-> **For Product Manager Discussion** > **Date:** November 2024
+> **For Product Manager Discussion** > **Date:** November 2025
 > **Status:** Phase 1 - Core Infrastructure Complete
 
 ---
@@ -58,7 +58,6 @@ A **production-ready football analytics platform** using industry-standard techn
 #### Database Access
 
 - **sqlc** - SQL-to-Go code generator
-
   - **Why:** Type-safe at compile time, no reflection overhead, full SQL control
   - **Performance:** 3-5x faster than GORM
   - **Used by:** Betting companies, fintech, analytics platforms
@@ -79,7 +78,6 @@ A **production-ready football analytics platform** using industry-standard techn
 #### Real-Time
 
 - **Gorilla WebSocket**
-
   - **Why:** Production-proven, RFC 6455 compliant, battle-tested
   - **Used by:** Major real-time platforms
   - **Performance:** 100,000+ concurrent connections per instance
@@ -153,7 +151,6 @@ A **production-ready football analytics platform** using industry-standard techn
 #### Cloud (AWS)
 
 - **Current (Development):**
-
   - Local Docker containers
   - Manual deployment ready
 
@@ -662,7 +659,6 @@ Match Events → Kinesis → Go Consumer → OpenSearch
 ### Immediate Priorities (Next 2 Weeks)
 
 1. **Complete Phase 1 Handlers** (8-12 hours)
-
    - Auth, User, Team, Player handlers
    - **Why:** Unblocks E2E tests, enables full demo
    - **Value:** Complete MVP for user testing
@@ -675,7 +671,6 @@ Match Events → Kinesis → Go Consumer → OpenSearch
 ### Medium-Term (1-3 Months)
 
 3. **Phase 2: External Data Feeds** (2-4 weeks)
-
    - Integrate Opta/StatsBomb/API-Football
    - **Why:** Real match data (competitive advantage)
    - **Value:** Automated data ingestion
@@ -688,7 +683,6 @@ Match Events → Kinesis → Go Consumer → OpenSearch
 ### Long-Term (3-6 Months)
 
 5. **Phase 3: OpenSearch Analytics** (4-6 weeks)
-
    - Advanced search and analytics
    - **Why:** Differentiation from competitors
    - **Value:** Premium features for paid tier
