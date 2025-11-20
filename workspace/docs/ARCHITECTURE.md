@@ -10,6 +10,12 @@ This document describes the complete architecture of the Footie platform, includ
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────┐
+│                     EXTERNAL DATA FEEDS (Future)                         │
+│  Opta / StatsBomb / API-Football                                        │
+└─────────────────────────────┬───────────────────────────────────────────┘
+                              │ Webhook/Polling
+                              ▼
+┌─────────────────────────────────────────────────────────────────────────┐
 │                          ANGULAR FRONTEND                                │
 │  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐                 │
 │  │  Components  │  │   Services   │  │  WebSocket   │                 │
@@ -654,12 +660,26 @@ workspace/apps/api/
 
 ## 📚 References
 
+### Core Technologies
+
 - [sqlc Documentation](https://docs.sqlc.dev/)
 - [pgx Documentation](https://github.com/jackc/pgx)
 - [golang-migrate](https://github.com/golang-migrate/migrate)
 - [Redis Streams](https://redis.io/docs/data-types/streams/)
 - [Gorilla WebSocket](https://github.com/gorilla/websocket)
+
+### Architecture Patterns
+
 - [Clean Architecture (Uncle Bob)](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html)
+- [Repository Pattern](https://martinfowler.com/eaaCatalog/repository.html)
+- [Dependency Injection](https://en.wikipedia.org/wiki/Dependency_injection)
+
+### Data Providers
+
+- [Opta Sports](https://www.statsperform.com/opta/)
+- [StatsBomb](https://statsbomb.com/)
+- [API-Football](https://www.api-football.com/)
+- [Football-Data.org](https://www.football-data.org/)
 
 ---
 
