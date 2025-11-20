@@ -53,8 +53,8 @@
     },
     {
       "type": "shell",
-      "label": "Kill: Docker Containers on Port 8081",
-      "command": "docker ps --filter 'publish=8081' --format '{{.ID}}' | xargs -r docker stop && echo '✅ Stopped Docker containers using port 8081' || echo 'ℹ️  No Docker containers on port 8081'",
+      "label": "Kill: Docker Containers on Port 8088",
+      "command": "docker ps --filter 'publish=8088' --format '{{.ID}}' | xargs -r docker stop && echo '✅ Stopped Docker containers using port 8088' || echo 'ℹ️  No Docker containers on port 8088'",
       "presentation": {
         "echo": true,
         "reveal": "always",

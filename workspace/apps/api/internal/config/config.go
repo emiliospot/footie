@@ -101,8 +101,8 @@ func Load() (*Config, error) {
 		},
 		API: APIConfig{
 			Host:    getEnv("API_HOST", "0.0.0.0"),
-			Port:    getEnv("API_PORT", "8080"),
-			BaseURL: getEnv("API_BASE_URL", "http://localhost:8080"),
+			Port:    getEnv("API_PORT", "8088"),
+			BaseURL: getEnv("API_BASE_URL", "http://localhost:8088"),
 		},
 		Database: DatabaseConfig{
 			Host:     getEnv("DATABASE_HOST", "localhost"),

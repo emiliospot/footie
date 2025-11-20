@@ -144,11 +144,11 @@ export PATH=$PATH:$(go env GOPATH)/bin
 ### Port already in use?
 
 ```bash
-# Kill process on port 8081
-lsof -ti:8081 | xargs kill -9
+# Kill process on port 8088
+lsof -ti:8088 | xargs kill -9
 
 # Or change port in .env
-API_PORT=8081
+API_PORT=8088
 ```
 
 ### Database connection error?

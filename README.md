@@ -16,8 +16,8 @@ npm run dev
 **Access:**
 
 - Frontend: http://localhost:4200
-- Backend API: http://localhost:8081
-- API Docs: http://localhost:8081/swagger
+- Backend API: http://localhost:8088
+- API Docs: http://localhost:8088/swagger
 
 ---
 

@@ -120,7 +120,7 @@ APP_NAME=footie
 APP_VERSION=1.0.0
 
 # Backend API
-API_PORT=8081
+API_PORT=8088
 API_HOST=0.0.0.0
 
 # Database (use RDS endpoint from Terraform output)
