@@ -22,7 +22,7 @@
     "@angular/cli": "^21.0.0",
     "@angular/compiler-cli": "^19.0.0",
     "@nx/angular": "^22.1.0",
-    "@nx/eslint": "^22.1.0",
+    "@nx/eslint": "^22.1.1",
     "@nx/eslint-plugin": "^22.1.0",
     "@nx/workspace": "^22.1.0",
     "@playwright/test": "^1.48.0",
