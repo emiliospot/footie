@@ -24,7 +24,7 @@
     "@nx/angular": "^22.1.0",
     "@nx/eslint": "^22.1.0",
     "@nx/eslint-plugin": "^22.1.0",
-    "@nx/workspace": "^22.1.0",
+    "@nx/workspace": "^22.1.1",
     "@playwright/test": "^1.48.0",
     "@types/jasmine": "~5.1.0",
     "@types/node": "^20.0.0",
