@@ -287,7 +287,7 @@ func (q *Queries) DeleteTeamStats(ctx context.Context, id int32) error {
 }
 
 const getLeagueTable = `-- name: GetLeagueTable :many
-SELECT 
+SELECT
     ts.id, ts.team_id, ts.season, ts.competition, ts.matches_played, ts.wins, ts.draws, ts.losses, ts.points, ts.position, ts.goals_scored, ts.goals_conceded, ts.goal_difference, ts.clean_sheets, ts.goals_per_match, ts.home_wins, ts.home_draws, ts.home_losses, ts.away_wins, ts.away_draws, ts.away_losses, ts.possession, ts.pass_accuracy, ts.shots_per_match, ts.shots_on_target_percentage, ts.yellow_cards, ts.red_cards, ts.current_form, ts.created_at, ts.updated_at, ts.deleted_at,
     t.name,
     t.short_name,
@@ -295,8 +295,8 @@ SELECT
     t.logo
 FROM team_statistics ts
 JOIN teams t ON ts.team_id = t.id AND t.deleted_at IS NULL
-WHERE ts.season = $1 
-  AND ts.competition = $2 
+WHERE ts.season = $1
+  AND ts.competition = $2
   AND ts.deleted_at IS NULL
 ORDER BY ts.points DESC, ts.goal_difference DESC, ts.goals_scored DESC
 `
@@ -743,7 +743,7 @@ func (q *Queries) GetTeamStatsByTeamAndSeason(ctx context.Context, arg GetTeamSt
 }
 
 const getTopAssisters = `-- name: GetTopAssisters :many
-SELECT 
+SELECT
     ps.id, ps.player_id, ps.season, ps.competition, ps.matches_played, ps.matches_started, ps.minutes_played, ps.sub_on, ps.sub_off, ps.goals, ps.assists, ps.shots_total, ps.shots_on_target, ps.shot_accuracy, ps.goal_conversion, ps.passes_total, ps.passes_completed, ps.pass_accuracy, ps.key_passes, ps.crosses, ps.tackles, ps.tackles_won, ps.interceptions, ps.clearances, ps.blocked_shots, ps.duels, ps.duels_won, ps.aerial_duels, ps.aerial_duels_won, ps.yellow_cards, ps.red_cards, ps.fouls, ps.fouls_drawn, ps.clean_sheets, ps.goals_conceded, ps.saves_total, ps.save_percentage, ps.penalties_saved, ps.created_at, ps.updated_at, ps.deleted_at,
     p.full_name,
     p.position,
@@ -751,8 +751,8 @@ SELECT
 FROM player_statistics ps
 JOIN players p ON ps.player_id = p.id AND p.deleted_at IS NULL
 JOIN teams t ON p.team_id = t.id AND t.deleted_at IS NULL
-WHERE ps.season = $1 
-  AND ps.competition = $2 
+WHERE ps.season = $1
+  AND ps.competition = $2
   AND ps.deleted_at IS NULL
 ORDER BY ps.assists DESC, ps.goals DESC
 LIMIT $3
@@ -877,7 +877,7 @@ func (q *Queries) GetTopAssisters(ctx context.Context, arg GetTopAssistersParams
 }
 
 const getTopScorers = `-- name: GetTopScorers :many
-SELECT 
+SELECT
     ps.id, ps.player_id, ps.season, ps.competition, ps.matches_played, ps.matches_started, ps.minutes_played, ps.sub_on, ps.sub_off, ps.goals, ps.assists, ps.shots_total, ps.shots_on_target, ps.shot_accuracy, ps.goal_conversion, ps.passes_total, ps.passes_completed, ps.pass_accuracy, ps.key_passes, ps.crosses, ps.tackles, ps.tackles_won, ps.interceptions, ps.clearances, ps.blocked_shots, ps.duels, ps.duels_won, ps.aerial_duels, ps.aerial_duels_won, ps.yellow_cards, ps.red_cards, ps.fouls, ps.fouls_drawn, ps.clean_sheets, ps.goals_conceded, ps.saves_total, ps.save_percentage, ps.penalties_saved, ps.created_at, ps.updated_at, ps.deleted_at,
     p.full_name,
     p.position,
@@ -886,8 +886,8 @@ SELECT
 FROM player_statistics ps
 JOIN players p ON ps.player_id = p.id AND p.deleted_at IS NULL
 JOIN teams t ON p.team_id = t.id AND t.deleted_at IS NULL
-WHERE ps.season = $1 
-  AND ps.competition = $2 
+WHERE ps.season = $1
+  AND ps.competition = $2
   AND ps.deleted_at IS NULL
 ORDER BY ps.goals DESC, ps.assists DESC
 LIMIT $3
@@ -1015,7 +1015,7 @@ func (q *Queries) GetTopScorers(ctx context.Context, arg GetTopScorersParams) ([
 
 const updatePlayerStats = `-- name: UpdatePlayerStats :one
 UPDATE player_statistics
-SET 
+SET
     matches_played = $2,
     matches_started = $3,
     minutes_played = $4,
@@ -1164,7 +1164,7 @@ func (q *Queries) UpdatePlayerStats(ctx context.Context, arg UpdatePlayerStatsPa
 
 const updateTeamStats = `-- name: UpdateTeamStats :one
 UPDATE team_statistics
-SET 
+SET
     matches_played = $2,
     wins = $3,
     draws = $4,

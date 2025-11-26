@@ -49,9 +49,9 @@ ORDER BY minute ASC, extra_minute ASC;
 -- name: CreateMatchEvent :one
 INSERT INTO match_events (
     match_id, team_id, player_id, secondary_player_id, event_type,
-    minute, extra_minute, position_x, position_y, description, metadata
+    minute, second, period, extra_minute, position_x, position_y, description, metadata
 ) VALUES (
-    $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11
+    $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13
 )
 RETURNING *;
 

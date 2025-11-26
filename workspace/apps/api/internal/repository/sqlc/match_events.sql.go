@@ -43,11 +43,11 @@ func (q *Queries) CountMatchEvents(ctx context.Context, matchID int32) (int64, e
 const createMatchEvent = `-- name: CreateMatchEvent :one
 INSERT INTO match_events (
     match_id, team_id, player_id, secondary_player_id, event_type,
-    minute, extra_minute, position_x, position_y, description, metadata
+    minute, second, period, extra_minute, position_x, position_y, description, metadata
 ) VALUES (
-    $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11
+    $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13
 )
-RETURNING id, match_id, team_id, player_id, secondary_player_id, event_type, minute, extra_minute, position_x, position_y, description, metadata, created_at, updated_at, deleted_at
+RETURNING id, match_id, team_id, player_id, secondary_player_id, event_type, minute, extra_minute, position_x, position_y, description, metadata, created_at, updated_at, deleted_at, second, period
 `
 
 type CreateMatchEventParams struct {
@@ -57,6 +57,8 @@ type CreateMatchEventParams struct {
 	SecondaryPlayerID *int32         `json:"secondary_player_id"`
 	EventType         string         `json:"event_type"`
 	Minute            int32          `json:"minute"`
+	Second            *int32         `json:"second"`
+	Period            *string        `json:"period"`
 	ExtraMinute       *int32         `json:"extra_minute"`
 	PositionX         pgtype.Numeric `json:"position_x"`
 	PositionY         pgtype.Numeric `json:"position_y"`
@@ -72,6 +74,8 @@ func (q *Queries) CreateMatchEvent(ctx context.Context, arg CreateMatchEventPara
 		arg.SecondaryPlayerID,
 		arg.EventType,
 		arg.Minute,
+		arg.Second,
+		arg.Period,
 		arg.ExtraMinute,
 		arg.PositionX,
 		arg.PositionY,
@@ -95,6 +99,8 @@ func (q *Queries) CreateMatchEvent(ctx context.Context, arg CreateMatchEventPara
 		&i.CreatedAt,
 		&i.UpdatedAt,
 		&i.DeletedAt,
+		&i.Second,
+		&i.Period,
 	)
 	return i, err
 }
@@ -111,9 +117,9 @@ func (q *Queries) DeleteMatchEvent(ctx context.Context, id int32) error {
 }
 
 const getCardsByMatch = `-- name: GetCardsByMatch :many
-SELECT id, match_id, team_id, player_id, secondary_player_id, event_type, minute, extra_minute, position_x, position_y, description, metadata, created_at, updated_at, deleted_at FROM match_events
-WHERE match_id = $1 
-  AND event_type IN ('yellow_card', 'red_card') 
+SELECT id, match_id, team_id, player_id, secondary_player_id, event_type, minute, extra_minute, position_x, position_y, description, metadata, created_at, updated_at, deleted_at, second, period FROM match_events
+WHERE match_id = $1
+  AND event_type IN ('yellow_card', 'red_card')
   AND deleted_at IS NULL
 ORDER BY minute ASC, extra_minute ASC
 `
@@ -143,6 +149,8 @@ func (q *Queries) GetCardsByMatch(ctx context.Context, matchID int32) ([]MatchEv
 			&i.CreatedAt,
 			&i.UpdatedAt,
 			&i.DeletedAt,
+			&i.Second,
+			&i.Period,
 		); err != nil {
 			return nil, err
 		}
@@ -155,7 +163,7 @@ func (q *Queries) GetCardsByMatch(ctx context.Context, matchID int32) ([]MatchEv
 }
 
 const getGoalsByMatch = `-- name: GetGoalsByMatch :many
-SELECT id, match_id, team_id, player_id, secondary_player_id, event_type, minute, extra_minute, position_x, position_y, description, metadata, created_at, updated_at, deleted_at FROM match_events
+SELECT id, match_id, team_id, player_id, secondary_player_id, event_type, minute, extra_minute, position_x, position_y, description, metadata, created_at, updated_at, deleted_at, second, period FROM match_events
 WHERE match_id = $1 AND event_type = 'goal' AND deleted_at IS NULL
 ORDER BY minute ASC, extra_minute ASC
 `
@@ -185,6 +193,8 @@ func (q *Queries) GetGoalsByMatch(ctx context.Context, matchID int32) ([]MatchEv
 			&i.CreatedAt,
 			&i.UpdatedAt,
 			&i.DeletedAt,
+			&i.Second,
+			&i.Period,
 		); err != nil {
 			return nil, err
 		}
@@ -197,7 +207,7 @@ func (q *Queries) GetGoalsByMatch(ctx context.Context, matchID int32) ([]MatchEv
 }
 
 const getMatchEventByID = `-- name: GetMatchEventByID :one
-SELECT id, match_id, team_id, player_id, secondary_player_id, event_type, minute, extra_minute, position_x, position_y, description, metadata, created_at, updated_at, deleted_at FROM match_events
+SELECT id, match_id, team_id, player_id, secondary_player_id, event_type, minute, extra_minute, position_x, position_y, description, metadata, created_at, updated_at, deleted_at, second, period FROM match_events
 WHERE id = $1 AND deleted_at IS NULL
 LIMIT 1
 `
@@ -221,12 +231,14 @@ func (q *Queries) GetMatchEventByID(ctx context.Context, id int32) (MatchEvent, 
 		&i.CreatedAt,
 		&i.UpdatedAt,
 		&i.DeletedAt,
+		&i.Second,
+		&i.Period,
 	)
 	return i, err
 }
 
 const getMatchEvents = `-- name: GetMatchEvents :many
-SELECT id, match_id, team_id, player_id, secondary_player_id, event_type, minute, extra_minute, position_x, position_y, description, metadata, created_at, updated_at, deleted_at FROM match_events
+SELECT id, match_id, team_id, player_id, secondary_player_id, event_type, minute, extra_minute, position_x, position_y, description, metadata, created_at, updated_at, deleted_at, second, period FROM match_events
 WHERE match_id = $1 AND deleted_at IS NULL
 ORDER BY minute ASC, extra_minute ASC, id ASC
 `
@@ -256,6 +268,8 @@ func (q *Queries) GetMatchEvents(ctx context.Context, matchID int32) ([]MatchEve
 			&i.CreatedAt,
 			&i.UpdatedAt,
 			&i.DeletedAt,
+			&i.Second,
+			&i.Period,
 		); err != nil {
 			return nil, err
 		}
@@ -268,7 +282,7 @@ func (q *Queries) GetMatchEvents(ctx context.Context, matchID int32) ([]MatchEve
 }
 
 const getMatchEventsByType = `-- name: GetMatchEventsByType :many
-SELECT id, match_id, team_id, player_id, secondary_player_id, event_type, minute, extra_minute, position_x, position_y, description, metadata, created_at, updated_at, deleted_at FROM match_events
+SELECT id, match_id, team_id, player_id, secondary_player_id, event_type, minute, extra_minute, position_x, position_y, description, metadata, created_at, updated_at, deleted_at, second, period FROM match_events
 WHERE match_id = $1 AND event_type = $2 AND deleted_at IS NULL
 ORDER BY minute ASC, extra_minute ASC
 `
@@ -303,6 +317,8 @@ func (q *Queries) GetMatchEventsByType(ctx context.Context, arg GetMatchEventsBy
 			&i.CreatedAt,
 			&i.UpdatedAt,
 			&i.DeletedAt,
+			&i.Second,
+			&i.Period,
 		); err != nil {
 			return nil, err
 		}
@@ -315,7 +331,7 @@ func (q *Queries) GetMatchEventsByType(ctx context.Context, arg GetMatchEventsBy
 }
 
 const getPassesByMatch = `-- name: GetPassesByMatch :many
-SELECT id, match_id, team_id, player_id, secondary_player_id, event_type, minute, extra_minute, position_x, position_y, description, metadata, created_at, updated_at, deleted_at FROM match_events
+SELECT id, match_id, team_id, player_id, secondary_player_id, event_type, minute, extra_minute, position_x, position_y, description, metadata, created_at, updated_at, deleted_at, second, period FROM match_events
 WHERE match_id = $1 AND event_type = 'pass' AND deleted_at IS NULL
 ORDER BY minute ASC, extra_minute ASC
 `
@@ -345,6 +361,8 @@ func (q *Queries) GetPassesByMatch(ctx context.Context, matchID int32) ([]MatchE
 			&i.CreatedAt,
 			&i.UpdatedAt,
 			&i.DeletedAt,
+			&i.Second,
+			&i.Period,
 		); err != nil {
 			return nil, err
 		}
@@ -357,7 +375,7 @@ func (q *Queries) GetPassesByMatch(ctx context.Context, matchID int32) ([]MatchE
 }
 
 const getPlayerEvents = `-- name: GetPlayerEvents :many
-SELECT id, match_id, team_id, player_id, secondary_player_id, event_type, minute, extra_minute, position_x, position_y, description, metadata, created_at, updated_at, deleted_at FROM match_events
+SELECT id, match_id, team_id, player_id, secondary_player_id, event_type, minute, extra_minute, position_x, position_y, description, metadata, created_at, updated_at, deleted_at, second, period FROM match_events
 WHERE player_id = $1 AND deleted_at IS NULL
 ORDER BY id DESC
 LIMIT $2 OFFSET $3
@@ -394,6 +412,8 @@ func (q *Queries) GetPlayerEvents(ctx context.Context, arg GetPlayerEventsParams
 			&i.CreatedAt,
 			&i.UpdatedAt,
 			&i.DeletedAt,
+			&i.Second,
+			&i.Period,
 		); err != nil {
 			return nil, err
 		}
@@ -406,17 +426,17 @@ func (q *Queries) GetPlayerEvents(ctx context.Context, arg GetPlayerEventsParams
 }
 
 const getPlayerPassAccuracy = `-- name: GetPlayerPassAccuracy :one
-SELECT 
+SELECT
     COUNT(*) FILTER (WHERE metadata->>'completed' = 'true') as completed_passes,
     COUNT(*) as total_passes,
-    CASE 
-        WHEN COUNT(*) > 0 THEN 
+    CASE
+        WHEN COUNT(*) > 0 THEN
             ROUND((COUNT(*) FILTER (WHERE metadata->>'completed' = 'true')::numeric / COUNT(*) * 100), 2)
         ELSE 0
     END as pass_accuracy_percentage
 FROM match_events
-WHERE player_id = $1 
-  AND event_type = 'pass' 
+WHERE player_id = $1
+  AND event_type = 'pass'
   AND deleted_at IS NULL
 `
 
@@ -434,14 +454,14 @@ func (q *Queries) GetPlayerPassAccuracy(ctx context.Context, playerID *int32) (G
 }
 
 const getPlayerShotsWithXG = `-- name: GetPlayerShotsWithXG :many
-SELECT 
-    me.id, me.match_id, me.team_id, me.player_id, me.secondary_player_id, me.event_type, me.minute, me.extra_minute, me.position_x, me.position_y, me.description, me.metadata, me.created_at, me.updated_at, me.deleted_at,
+SELECT
+    me.id, me.match_id, me.team_id, me.player_id, me.secondary_player_id, me.event_type, me.minute, me.extra_minute, me.position_x, me.position_y, me.description, me.metadata, me.created_at, me.updated_at, me.deleted_at, me.second, me.period,
     me.metadata->>'xg' as expected_goals,
     me.metadata->>'shot_type' as shot_type,
     me.metadata->>'body_part' as body_part
 FROM match_events me
-WHERE me.player_id = $1 
-  AND me.event_type = 'shot' 
+WHERE me.player_id = $1
+  AND me.event_type = 'shot'
   AND me.deleted_at IS NULL
 ORDER BY me.id DESC
 LIMIT $2 OFFSET $3
@@ -469,6 +489,8 @@ type GetPlayerShotsWithXGRow struct {
 	CreatedAt         pgtype.Timestamptz `json:"created_at"`
 	UpdatedAt         pgtype.Timestamptz `json:"updated_at"`
 	DeletedAt         pgtype.Timestamptz `json:"deleted_at"`
+	Second            *int32             `json:"second"`
+	Period            *string            `json:"period"`
 	ExpectedGoals     interface{}        `json:"expected_goals"`
 	ShotType          interface{}        `json:"shot_type"`
 	BodyPart          interface{}        `json:"body_part"`
@@ -500,6 +522,8 @@ func (q *Queries) GetPlayerShotsWithXG(ctx context.Context, arg GetPlayerShotsWi
 			&i.CreatedAt,
 			&i.UpdatedAt,
 			&i.DeletedAt,
+			&i.Second,
+			&i.Period,
 			&i.ExpectedGoals,
 			&i.ShotType,
 			&i.BodyPart,
@@ -515,7 +539,7 @@ func (q *Queries) GetPlayerShotsWithXG(ctx context.Context, arg GetPlayerShotsWi
 }
 
 const getShotsByMatch = `-- name: GetShotsByMatch :many
-SELECT id, match_id, team_id, player_id, secondary_player_id, event_type, minute, extra_minute, position_x, position_y, description, metadata, created_at, updated_at, deleted_at FROM match_events
+SELECT id, match_id, team_id, player_id, secondary_player_id, event_type, minute, extra_minute, position_x, position_y, description, metadata, created_at, updated_at, deleted_at, second, period FROM match_events
 WHERE match_id = $1 AND event_type = 'shot' AND deleted_at IS NULL
 ORDER BY minute ASC, extra_minute ASC
 `
@@ -545,6 +569,8 @@ func (q *Queries) GetShotsByMatch(ctx context.Context, matchID int32) ([]MatchEv
 			&i.CreatedAt,
 			&i.UpdatedAt,
 			&i.DeletedAt,
+			&i.Second,
+			&i.Period,
 		); err != nil {
 			return nil, err
 		}
@@ -557,7 +583,7 @@ func (q *Queries) GetShotsByMatch(ctx context.Context, matchID int32) ([]MatchEv
 }
 
 const getTeamEventsInMatch = `-- name: GetTeamEventsInMatch :many
-SELECT id, match_id, team_id, player_id, secondary_player_id, event_type, minute, extra_minute, position_x, position_y, description, metadata, created_at, updated_at, deleted_at FROM match_events
+SELECT id, match_id, team_id, player_id, secondary_player_id, event_type, minute, extra_minute, position_x, position_y, description, metadata, created_at, updated_at, deleted_at, second, period FROM match_events
 WHERE match_id = $1 AND team_id = $2 AND deleted_at IS NULL
 ORDER BY minute ASC, extra_minute ASC
 `
@@ -592,6 +618,8 @@ func (q *Queries) GetTeamEventsInMatch(ctx context.Context, arg GetTeamEventsInM
 			&i.CreatedAt,
 			&i.UpdatedAt,
 			&i.DeletedAt,
+			&i.Second,
+			&i.Period,
 		); err != nil {
 			return nil, err
 		}
@@ -604,7 +632,7 @@ func (q *Queries) GetTeamEventsInMatch(ctx context.Context, arg GetTeamEventsInM
 }
 
 const getTeamPossessionEvents = `-- name: GetTeamPossessionEvents :many
-SELECT 
+SELECT
     team_id,
     COUNT(*) as total_events,
     COUNT(*) FILTER (WHERE event_type = 'pass') as passes,
@@ -648,7 +676,7 @@ func (q *Queries) GetTeamPossessionEvents(ctx context.Context, matchID int32) ([
 
 const updateMatchEvent = `-- name: UpdateMatchEvent :one
 UPDATE match_events
-SET 
+SET
     event_type = COALESCE($1, event_type),
     minute = COALESCE($2, minute),
     extra_minute = COALESCE($3, extra_minute),
@@ -657,7 +685,7 @@ SET
     description = COALESCE($6, description),
     metadata = COALESCE($7, metadata)
 WHERE id = $8 AND deleted_at IS NULL
-RETURNING id, match_id, team_id, player_id, secondary_player_id, event_type, minute, extra_minute, position_x, position_y, description, metadata, created_at, updated_at, deleted_at
+RETURNING id, match_id, team_id, player_id, secondary_player_id, event_type, minute, extra_minute, position_x, position_y, description, metadata, created_at, updated_at, deleted_at, second, period
 `
 
 type UpdateMatchEventParams struct {
@@ -699,6 +727,8 @@ func (q *Queries) UpdateMatchEvent(ctx context.Context, arg UpdateMatchEventPara
 		&i.CreatedAt,
 		&i.UpdatedAt,
 		&i.DeletedAt,
+		&i.Second,
+		&i.Period,
 	)
 	return i, err
 }

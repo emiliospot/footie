@@ -91,9 +91,8 @@ func (p *StatsBombProvider) ExtractEvents(ctx context.Context, payload []byte) (
 
 // extractSingleStatsBombEvent extracts a single event from a StatsBombPayload.
 func (p *StatsBombProvider) extractSingleStatsBombEvent(sbPayload *StatsBombPayload) (*infraEvents.MatchEvent, error) {
-	var sbPayload StatsBombPayload
-	if err := json.Unmarshal(payload, &sbPayload); err != nil {
-		return nil, fmt.Errorf("failed to parse StatsBomb payload: %w", err)
+	if sbPayload == nil {
+		return nil, fmt.Errorf("payload is nil")
 	}
 
 	// Convert match ID

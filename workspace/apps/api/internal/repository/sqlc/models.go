@@ -43,6 +43,8 @@ type MatchEvent struct {
 	CreatedAt         pgtype.Timestamptz `json:"created_at"`
 	UpdatedAt         pgtype.Timestamptz `json:"updated_at"`
 	DeletedAt         pgtype.Timestamptz `json:"deleted_at"`
+	Second            *int32             `json:"second"`
+	Period            *string            `json:"period"`
 }
 
 type Player struct {

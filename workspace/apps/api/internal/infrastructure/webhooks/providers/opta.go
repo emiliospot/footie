@@ -52,9 +52,55 @@ type OptaPayload struct {
 
 // ExtractEvent extracts and transforms an Opta payload into our internal format.
 func (p *OptaProvider) ExtractEvent(ctx context.Context, payload []byte) (*infraEvents.MatchEvent, error) {
+	events, err := p.ExtractEvents(ctx, payload)
+	if err != nil {
+		return nil, err
+	}
+	if len(events) == 0 {
+		return nil, fmt.Errorf("no events extracted from payload")
+	}
+	if len(events) > 1 {
+		return nil, fmt.Errorf("expected single event, got %d events. Use ExtractEvents for batch processing", len(events))
+	}
+	return events[0], nil
+}
+
+// ExtractEvents extracts and transforms Opta payloads (single or batch) into our internal format.
+// Supports both single event objects and arrays of events.
+func (p *OptaProvider) ExtractEvents(ctx context.Context, payload []byte) ([]*infraEvents.MatchEvent, error) {
+	// Try to parse as array first (batch)
+	var batchPayload []OptaPayload
+	if err := json.Unmarshal(payload, &batchPayload); err == nil {
+		// Successfully parsed as array - process batch
+		events := make([]*infraEvents.MatchEvent, 0, len(batchPayload))
+		for i, optaPayload := range batchPayload {
+			event, err := p.extractSingleOptaEvent(&optaPayload)
+			if err != nil {
+				return nil, fmt.Errorf("failed to extract event at index %d: %w", i, err)
+			}
+			events = append(events, event)
+		}
+		return events, nil
+	}
+
+	// Try to parse as single event
 	var optaPayload OptaPayload
 	if err := json.Unmarshal(payload, &optaPayload); err != nil {
-		return nil, fmt.Errorf("failed to parse Opta payload: %w", err)
+		return nil, fmt.Errorf("failed to parse Opta payload as single event or batch: %w", err)
+	}
+
+	// Single event
+	event, err := p.extractSingleOptaEvent(&optaPayload)
+	if err != nil {
+		return nil, err
+	}
+	return []*infraEvents.MatchEvent{event}, nil
+}
+
+// extractSingleOptaEvent extracts a single event from an OptaPayload.
+func (p *OptaProvider) extractSingleOptaEvent(optaPayload *OptaPayload) (*infraEvents.MatchEvent, error) {
+	if optaPayload == nil {
+		return nil, fmt.Errorf("payload is nil")
 	}
 
 	// Convert Opta match ID to int32

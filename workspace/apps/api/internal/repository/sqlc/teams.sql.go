@@ -23,7 +23,7 @@ func (q *Queries) CountTeams(ctx context.Context) (int64, error) {
 
 const createTeam = `-- name: CreateTeam :one
 INSERT INTO teams (
-    name, short_name, code, country, city, stadium, stadium_capacity, 
+    name, short_name, code, country, city, stadium, stadium_capacity,
     founded, logo, colors, website
 ) VALUES (
     $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11
@@ -241,7 +241,7 @@ func (q *Queries) ListTeams(ctx context.Context, arg ListTeamsParams) ([]Team, e
 
 const searchTeamsByName = `-- name: SearchTeamsByName :many
 SELECT id, name, short_name, code, country, city, stadium, stadium_capacity, founded, logo, colors, website, created_at, updated_at, deleted_at FROM teams
-WHERE deleted_at IS NULL 
+WHERE deleted_at IS NULL
   AND name ILIKE '%' || $1 || '%'
 ORDER BY name
 LIMIT $2 OFFSET $3
@@ -291,7 +291,7 @@ func (q *Queries) SearchTeamsByName(ctx context.Context, arg SearchTeamsByNamePa
 
 const updateTeam = `-- name: UpdateTeam :one
 UPDATE teams
-SET 
+SET
     name = COALESCE($1, name),
     short_name = COALESCE($2, short_name),
     country = COALESCE($3, country),

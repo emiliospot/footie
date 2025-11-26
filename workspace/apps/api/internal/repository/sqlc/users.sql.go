@@ -186,7 +186,7 @@ func (q *Queries) ListUsers(ctx context.Context, arg ListUsersParams) ([]User, e
 
 const updateUser = `-- name: UpdateUser :one
 UPDATE users
-SET 
+SET
     first_name = COALESCE($1, first_name),
     last_name = COALESCE($2, last_name),
     avatar = COALESCE($3, avatar),

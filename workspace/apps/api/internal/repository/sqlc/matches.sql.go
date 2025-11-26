@@ -182,7 +182,7 @@ func (q *Queries) GetMatchByID(ctx context.Context, id int32) (Match, error) {
 }
 
 const getMatchWithTeams = `-- name: GetMatchWithTeams :one
-SELECT 
+SELECT
     m.id, m.home_team_id, m.away_team_id, m.match_date, m.competition, m.season, m.round, m.stadium, m.attendance, m.status, m.referee, m.home_team_score, m.away_team_score, m.created_at, m.updated_at, m.deleted_at,
     ht.id as home_team_id,
     ht.name as home_team_name,
@@ -464,7 +464,7 @@ func (q *Queries) GetMatchesByStatus(ctx context.Context, arg GetMatchesByStatus
 
 const getMatchesByTeam = `-- name: GetMatchesByTeam :many
 SELECT id, home_team_id, away_team_id, match_date, competition, season, round, stadium, attendance, status, referee, home_team_score, away_team_score, created_at, updated_at, deleted_at FROM matches
-WHERE (home_team_id = $1 OR away_team_id = $1) 
+WHERE (home_team_id = $1 OR away_team_id = $1)
   AND deleted_at IS NULL
 ORDER BY match_date DESC
 LIMIT $2 OFFSET $3
@@ -608,7 +608,7 @@ func (q *Queries) ListMatches(ctx context.Context, arg ListMatchesParams) ([]Mat
 
 const updateMatch = `-- name: UpdateMatch :one
 UPDATE matches
-SET 
+SET
     match_date = COALESCE($1, match_date),
     competition = COALESCE($2, competition),
     season = COALESCE($3, season),
@@ -675,7 +675,7 @@ func (q *Queries) UpdateMatch(ctx context.Context, arg UpdateMatchParams) (Match
 
 const updateMatchScore = `-- name: UpdateMatchScore :one
 UPDATE matches
-SET 
+SET
     home_team_score = $2,
     away_team_score = $3
 WHERE id = $1 AND deleted_at IS NULL

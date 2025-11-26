@@ -139,7 +139,7 @@ func (q *Queries) GetPlayerByID(ctx context.Context, id int32) (Player, error) {
 }
 
 const getPlayerWithTeam = `-- name: GetPlayerWithTeam :one
-SELECT 
+SELECT
     p.id, p.team_id, p.first_name, p.last_name, p.full_name, p.date_of_birth, p.nationality, p.position, p.shirt_number, p.height, p.weight, p.preferred_foot, p.photo, p.created_at, p.updated_at, p.deleted_at,
     t.id as team_id,
     t.name as team_name,
@@ -346,7 +346,7 @@ func (q *Queries) ListPlayers(ctx context.Context, arg ListPlayersParams) ([]Pla
 
 const searchPlayersByName = `-- name: SearchPlayersByName :many
 SELECT id, team_id, first_name, last_name, full_name, date_of_birth, nationality, position, shirt_number, height, weight, preferred_foot, photo, created_at, updated_at, deleted_at FROM players
-WHERE deleted_at IS NULL 
+WHERE deleted_at IS NULL
   AND full_name ILIKE '%' || $1 || '%'
 ORDER BY full_name
 LIMIT $2 OFFSET $3
@@ -397,7 +397,7 @@ func (q *Queries) SearchPlayersByName(ctx context.Context, arg SearchPlayersByNa
 
 const updatePlayer = `-- name: UpdatePlayer :one
 UPDATE players
-SET 
+SET
     team_id = COALESCE($1, team_id),
     first_name = COALESCE($2, first_name),
     last_name = COALESCE($3, last_name),

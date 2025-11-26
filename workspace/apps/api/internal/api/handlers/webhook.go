@@ -360,6 +360,12 @@ func (h *WebhookHandler) processSingleEvent(ctx context.Context, event *events.M
 		second = &s
 	}
 
+	// Convert period to string pointer
+	var period *string
+	if event.Period != "" {
+		period = &event.Period
+	}
+
 	// Create event in database
 	dbEvent, err := h.queries.CreateMatchEvent(ctx, sqlc.CreateMatchEventParams{
 		MatchID:           matchID,
@@ -369,6 +375,7 @@ func (h *WebhookHandler) processSingleEvent(ctx context.Context, event *events.M
 		EventType:         event.EventType,
 		Minute:            int32(event.Minute),
 		Second:            second,
+		Period:            period,
 		ExtraMinute: func() *int32 {
 			if event.ExtraMinute > 0 {
 				em := int32(event.ExtraMinute)
