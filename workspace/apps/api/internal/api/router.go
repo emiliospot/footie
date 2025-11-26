@@ -67,6 +67,7 @@ func NewRouter(cfg *config.Config, pool *pgxpool.Pool, redis *redis.Client, hub 
 	// Initialize handlers
 	healthHandler := handlers.NewHealthHandler(baseHandler)
 	matchHandler := handlers.NewMatchHandler(baseHandler)
+	rankingsHandler := handlers.NewRankingsHandler(baseHandler)
 	webhookHandler := handlers.NewWebhookHandler(baseHandler, &cfg.Webhook, providerRegistry)
 
 	// Health check endpoint
@@ -132,6 +133,10 @@ func NewRouter(cfg *config.Config, pool *pgxpool.Pool, redis *redis.Client, hub 
 	matches.GET("/:id", matchHandler.GetMatch)
 	matches.GET("/:id/events", matchHandler.GetMatchEvents)
 	matches.POST("/:id/events", matchHandler.CreateMatchEvent) // TODO: Add RequireRole("analyst")
+
+	// Rankings routes
+	rankings := protected.Group("/rankings")
+	rankings.GET("", rankingsHandler.GetCompetitionRankings)
 
 	// TODO: Implement additional handlers
 	// - User handler (users CRUD, profile management)

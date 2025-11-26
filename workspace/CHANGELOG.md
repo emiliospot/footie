@@ -13,8 +13,15 @@
 - **api:** Add second-level precision to match events (0-59 seconds)
 - **api:** Add per-provider webhook secret configuration
 - **api:** Add database migration for event time fields (second, period)
+- **api:** Add Competition Rankings API endpoint with mock data
+- **api:** Make database and Redis optional in development mode
+- **web:** Add Competition Rankings component (Angular)
+- **web:** Embed Competition Rankings in dashboard
+- **web:** Add rankings service and models
+- **web:** Update auth guard to redirect to dashboard instead of login
 - **docs:** Add comprehensive event types documentation
 - **docs:** Add duration and period handling documentation
+- **docs:** Add Competition Rankings feature README
 - **docs:** Update architecture documentation with provider pattern
 - **docs:** Update tech stack presentation with new patterns
 

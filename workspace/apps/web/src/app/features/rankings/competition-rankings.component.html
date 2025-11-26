@@ -1,0 +1,114 @@
+<div class="competition-rankings">
+  <!-- Header -->
+  <div class="header">
+    <div class="title-section">
+      <h1>
+        <span class="trophy-icon">🏆</span>
+        Competition Rankings
+      </h1>
+      <p class="subtitle">
+        {{
+          rankingType === 'team'
+            ? 'Team rankings across different performance categories.'
+            : 'Player rankings across different performance categories.'
+        }}
+      </p>
+    </div>
+  </div>
+
+  <!-- Filters -->
+  <div class="filters">
+    <div class="filter-group">
+      <label for="championship">Select Championship</label>
+      <select
+        id="championship"
+        [(ngModel)]="selectedChampionship"
+        (change)="onChampionshipChange()"
+        class="filter-select"
+      >
+        <option value="Cyprus U19 League Division 1">Cyprus U19 League Division 1</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <label for="season">Select Season</label>
+      <select id="season" [(ngModel)]="selectedSeason" (change)="onSeasonChange()" class="filter-select">
+        <option value="2025/2026">2025/2026</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Main Content Card -->
+  <div class="rankings-card">
+    <!-- Main Tabs: Team Rankings / Player Rankings -->
+    <div class="main-tabs">
+      <button class="tab-button" [class.active]="rankingType === 'team'" (click)="onRankingTypeChange('team')">
+        Team Rankings
+      </button>
+      <button class="tab-button" [class.active]="rankingType === 'player'" (click)="onRankingTypeChange('player')">
+        Player Rankings
+      </button>
+    </div>
+
+    <!-- Category Sub-tabs -->
+    <div class="category-tabs">
+      <button
+        *ngFor="let cat of categories; trackBy: trackByCategory"
+        class="category-tab"
+        [class.active]="selectedCategory === cat.value"
+        (click)="onCategoryChange(cat.value)"
+      >
+        {{ cat.label }}
+      </button>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="loading" class="loading">
+      <p>Loading rankings...</p>
+    </div>
+
+    <!-- Error State -->
+    <div *ngIf="error && !loading" class="error">
+      <p>{{ error }}</p>
+    </div>
+
+    <!-- Rankings Content -->
+    <div *ngIf="rankingsData && !loading && !error" class="rankings-content">
+      <div *ngFor="let category of rankingsData.categories; trackBy: trackByCategoryCard" class="ranking-category-card">
+        <h3 class="category-title">
+          {{ category.title }}
+          <span class="unit">{{ category.unit }}</span>
+        </h3>
+        <div class="ranking-list">
+          <div *ngFor="let entry of category.rankings; trackBy: trackByRankingEntry" class="ranking-entry">
+            <div class="rank-number">{{ entry.rank }}</div>
+            <div class="entry-info">
+              <!-- Team Rankings -->
+              <div *ngIf="rankingType === 'team'" class="team-entry">
+                <div class="team-logo" *ngIf="entry.logo">
+                  <img [src]="entry.logo" [alt]="entry.name" />
+                </div>
+                <div class="team-name">{{ entry.name }}</div>
+              </div>
+              <!-- Player Rankings -->
+              <div *ngIf="rankingType === 'player'" class="player-entry">
+                <div
+                  class="player-avatar"
+                  [style.background-color]="entry.avatarColor || getAvatarColor(entry.name, entry.rank - 1)"
+                >
+                  {{ entry.initials || getInitials(entry.name) }}
+                </div>
+                <div class="player-details">
+                  <div class="player-name">{{ entry.name }}</div>
+                  <div class="player-team" *ngIf="entry.team">
+                    {{ entry.team }}
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="ranking-value">{{ entry.value }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
