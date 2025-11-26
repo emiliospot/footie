@@ -2,30 +2,24 @@ package models
 
 import (
 	"time"
-
-	"gorm.io/gorm"
 )
 
 // User represents a user in the system.
+// This is a domain model - database-agnostic, contains business logic.
 type User struct {
-	CreatedAt     time.Time      `json:"created_at"`
-	UpdatedAt     time.Time      `json:"updated_at"`
-	DeletedAt     gorm.DeletedAt `gorm:"index" json:"-"`
-	FirstName     string         `gorm:"not null" json:"first_name"`
-	Email         string         `gorm:"uniqueIndex;not null" json:"email"`
-	PasswordHash  string         `gorm:"not null" json:"-"`
-	LastName      string         `gorm:"not null" json:"last_name"`
-	Role          string         `gorm:"not null;default:'user'" json:"role"`
-	Avatar        string         `json:"avatar,omitempty"`
-	Organization  string         `json:"organization,omitempty"`
-	ID            uint           `gorm:"primarykey" json:"id"`
-	IsActive      bool           `gorm:"not null;default:true" json:"is_active"`
-	EmailVerified bool           `gorm:"not null;default:false" json:"email_verified"`
-}
-
-// TableName specifies the table name for User model.
-func (User) TableName() string {
-	return "users"
+	ID            int32     `json:"id"`
+	Email         string    `json:"email"`
+	PasswordHash  string    `json:"-"` // Never expose password hash in JSON
+	FirstName     string    `json:"first_name"`
+	LastName      string    `json:"last_name"`
+	Role          string    `json:"role"`
+	Avatar        *string   `json:"avatar,omitempty"`
+	Organization  *string   `json:"organization,omitempty"`
+	IsActive      bool      `json:"is_active"`
+	EmailVerified bool      `json:"email_verified"`
+	CreatedAt     time.Time `json:"created_at"`
+	UpdatedAt     time.Time `json:"updated_at"`
+	DeletedAt     *time.Time `json:"-"` // Soft delete timestamp
 }
 
 // IsAdmin returns true if user is an admin.

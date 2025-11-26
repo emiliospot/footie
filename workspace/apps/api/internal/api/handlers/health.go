@@ -22,7 +22,7 @@ type HealthResponse struct {
 	Version string `json:"version"`
 }
 
-// Check handles the health check endpoint
+// Check handles the health check endpoint.
 // @Summary Health check
 // @Description Check if the API is running
 // @Tags health

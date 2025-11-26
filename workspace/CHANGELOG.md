@@ -1,3 +1,25 @@
+## [Unreleased]
+
+### Features
+
+* **api:** Decouple domain models from GORM and sqlc dependencies
+* **api:** Add mapper layer to convert between sqlc types and domain models
+* **api:** Refactor match handler to use clean domain models in API responses
+
+### Refactoring
+
+* **api:** Remove GORM dependencies from all domain models (user, team, player, match, match_event, statistics)
+* **api:** Replace `uint` with `int32` in domain models to align with sqlc
+* **api:** Replace `gorm.DeletedAt` with `*time.Time` for soft deletes
+* **api:** Extract async match event publishing to reduce cognitive complexity
+* **api:** Fix all linting warnings (variable shadowing, error handling, comments)
+
+### Bug Fixes
+
+* **api:** Fix pgtype.Date conversion in player mapper
+* **api:** Fix pgtype.Numeric conversions in match event handler
+* **api:** Improve error handling in position coordinate scanning
+
 ## 1.0.0 (2025-11-20)
 
 ### Features

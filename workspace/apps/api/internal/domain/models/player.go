@@ -2,34 +2,27 @@ package models
 
 import (
 	"time"
-
-	"gorm.io/gorm"
 )
 
 // Player represents a football player.
+// This is a domain model - database-agnostic, contains business logic.
 type Player struct {
-	CreatedAt     time.Time      `json:"created_at"`
-	UpdatedAt     time.Time      `json:"updated_at"`
-	DateOfBirth   *time.Time     `json:"date_of_birth,omitempty"`
-	Team          *Team          `gorm:"foreignKey:TeamID" json:"team,omitempty"`
-	DeletedAt     gorm.DeletedAt `gorm:"index" json:"-"`
-	Nationality   string         `gorm:"index" json:"nationality,omitempty"`
-	FullName      string         `gorm:"not null;index" json:"full_name"`
-	LastName      string         `gorm:"not null" json:"last_name"`
-	Position      string         `gorm:"not null;index" json:"position"`
-	PreferredFoot string         `json:"preferred_foot,omitempty"`
-	Photo         string         `json:"photo,omitempty"`
-	FirstName     string         `gorm:"not null" json:"first_name"`
-	ID            uint           `gorm:"primarykey" json:"id"`
-	Height        int            `json:"height,omitempty"`
-	Weight        int            `json:"weight,omitempty"`
-	ShirtNumber   int            `json:"shirt_number,omitempty"`
-	TeamID        uint           `gorm:"not null;index" json:"team_id"`
-}
-
-// TableName specifies the table name for Player model.
-func (Player) TableName() string {
-	return "players"
+	ID            int32      `json:"id"`
+	TeamID        int32      `json:"team_id"`
+	FirstName     string     `json:"first_name"`
+	LastName      string     `json:"last_name"`
+	FullName      string     `json:"full_name"`
+	DateOfBirth   *time.Time `json:"date_of_birth,omitempty"`
+	Nationality   *string    `json:"nationality,omitempty"`
+	Position      string     `json:"position"`
+	ShirtNumber   *int32     `json:"shirt_number,omitempty"`
+	Height        *int32     `json:"height,omitempty"` // in cm
+	Weight        *int32     `json:"weight,omitempty"` // in kg
+	PreferredFoot *string    `json:"preferred_foot,omitempty"`
+	Photo         *string    `json:"photo,omitempty"`
+	CreatedAt     time.Time  `json:"created_at"`
+	UpdatedAt     time.Time  `json:"updated_at"`
+	DeletedAt     *time.Time `json:"-"` // Soft delete timestamp
 }
 
 // Age calculates the player's age.

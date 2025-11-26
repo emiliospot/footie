@@ -1,37 +1,28 @@
 package models
 
 import (
+	"encoding/json"
 	"time"
-
-	"gorm.io/gorm"
 )
 
 // MatchEvent represents an event that occurred during a match.
+// This is a domain model - database-agnostic, contains business logic.
 type MatchEvent struct {
-	CreatedAt         time.Time      `json:"created_at"`
-	UpdatedAt         time.Time      `json:"updated_at"`
-	PlayerID          *uint          `gorm:"index" json:"player_id,omitempty"`
-	SecondaryPlayer   *Player        `gorm:"foreignKey:SecondaryPlayerID" json:"secondary_player,omitempty"`
-	Match             *Match         `gorm:"foreignKey:MatchID" json:"match,omitempty"`
-	SecondaryPlayerID *uint          `gorm:"index" json:"secondary_player_id,omitempty"`
-	Team              *Team          `gorm:"foreignKey:TeamID" json:"team,omitempty"`
-	TeamID            *uint          `gorm:"index" json:"team_id,omitempty"`
-	Player            *Player        `gorm:"foreignKey:PlayerID" json:"player,omitempty"`
-	DeletedAt         gorm.DeletedAt `gorm:"index" json:"-"`
-	EventType         string         `gorm:"not null;index" json:"event_type"`
-	Description       string         `json:"description,omitempty"`
-	Metadata          string         `gorm:"type:jsonb" json:"metadata,omitempty"`
-	ID                uint           `gorm:"primarykey" json:"id"`
-	ExtraMinute       int            `json:"extra_minute,omitempty"`
-	Minute            int            `gorm:"not null" json:"minute"`
-	MatchID           uint           `gorm:"not null;index" json:"match_id"`
-	PositionX         float64        `json:"position_x,omitempty"`
-	PositionY         float64        `json:"position_y,omitempty"`
-}
-
-// TableName specifies the table name for MatchEvent model.
-func (MatchEvent) TableName() string {
-	return "match_events"
+	ID                int32           `json:"id"`
+	MatchID           int32           `json:"match_id"`
+	TeamID            *int32          `json:"team_id,omitempty"`
+	PlayerID          *int32          `json:"player_id,omitempty"`
+	SecondaryPlayerID *int32          `json:"secondary_player_id,omitempty"`
+	EventType         string          `json:"event_type"`
+	Minute            int32           `json:"minute"`
+	ExtraMinute       *int32          `json:"extra_minute,omitempty"`
+	PositionX         *float64        `json:"position_x,omitempty"`
+	PositionY         *float64        `json:"position_y,omitempty"`
+	Description       *string         `json:"description,omitempty"`
+	Metadata          json.RawMessage `json:"metadata,omitempty"`
+	CreatedAt         time.Time       `json:"created_at"`
+	UpdatedAt         time.Time       `json:"updated_at"`
+	DeletedAt         *time.Time      `json:"-"` // Soft delete timestamp
 }
 
 // IsGoal returns true if the event is a goal.

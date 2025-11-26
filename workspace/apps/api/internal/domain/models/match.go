@@ -2,45 +2,32 @@ package models
 
 import (
 	"time"
-
-	"gorm.io/gorm"
 )
 
 // Match represents a football match.
-//
-//nolint:govet // Field alignment optimization would reduce readability
+// This is a domain model - database-agnostic, contains business logic.
 type Match struct {
-	ID        uint           `gorm:"primarykey" json:"id"`
-	CreatedAt time.Time      `json:"created_at"`
-	UpdatedAt time.Time      `json:"updated_at"`
-	DeletedAt gorm.DeletedAt `gorm:"index" json:"-"`
-
-	MatchDate   time.Time `gorm:"not null;index" json:"match_date"`
-	Competition string    `gorm:"not null;index" json:"competition"`
-	Season      string    `gorm:"not null;index" json:"season"`
-	Round       string    `json:"round,omitempty"`
-	Stadium     string    `json:"stadium,omitempty"`
-	Attendance  int       `json:"attendance,omitempty"`
-	Status      string    `gorm:"not null;default:'scheduled'" json:"status"` // scheduled, live, finished, postponed, canceled
-	Referee     string    `json:"referee,omitempty"`
+	ID        int32     `json:"id"`
+	MatchDate time.Time `json:"match_date"`
+	Competition string  `json:"competition"`
+	Season      string  `json:"season"`
+	Round       *string `json:"round,omitempty"`
+	Stadium     *string `json:"stadium,omitempty"`
+	Attendance  *int32  `json:"attendance,omitempty"`
+	Status      string  `json:"status"` // scheduled, live, finished, postponed, canceled
+	Referee     *string `json:"referee,omitempty"`
 
 	// Home Team
-	HomeTeamID    uint  `gorm:"not null;index" json:"home_team_id"`
-	HomeTeam      *Team `gorm:"foreignKey:HomeTeamID" json:"home_team,omitempty"`
-	HomeTeamScore int   `gorm:"default:0" json:"home_team_score"`
+	HomeTeamID    int32 `json:"home_team_id"`
+	HomeTeamScore int32 `json:"home_team_score"`
 
 	// Away Team
-	AwayTeamID    uint  `gorm:"not null;index" json:"away_team_id"`
-	AwayTeam      *Team `gorm:"foreignKey:AwayTeamID" json:"away_team,omitempty"`
-	AwayTeamScore int   `gorm:"default:0" json:"away_team_score"`
+	AwayTeamID    int32 `json:"away_team_id"`
+	AwayTeamScore int32 `json:"away_team_score"`
 
-	// Relations
-	Events []MatchEvent `gorm:"foreignKey:MatchID" json:"events,omitempty"`
-}
-
-// TableName specifies the table name for Match model.
-func (Match) TableName() string {
-	return "matches"
+	CreatedAt time.Time  `json:"created_at"`
+	UpdatedAt time.Time  `json:"updated_at"`
+	DeletedAt *time.Time `json:"-"` // Soft delete timestamp
 }
 
 // IsFinished returns true if the match is finished.
@@ -54,7 +41,7 @@ func (m *Match) IsLive() bool {
 }
 
 // Winner returns the ID of the winning team, or 0 for a draw.
-func (m *Match) Winner() uint {
+func (m *Match) Winner() int32 {
 	if m.HomeTeamScore > m.AwayTeamScore {
 		return m.HomeTeamID
 	} else if m.AwayTeamScore > m.HomeTeamScore {
