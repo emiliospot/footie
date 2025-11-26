@@ -4,6 +4,16 @@
 
 This guide covers integrating external football data feeds (Opta, StatsBomb, API-Football, etc.) into your real-time analytics platform.
 
+## 🎯 Design Patterns
+
+This integration uses **three complementary design patterns**:
+
+1. **Adapter Pattern** - Each provider adapts external formats to our internal format
+2. **Strategy Pattern** - Different extraction strategies per provider (Opta vs StatsBomb)
+3. **Registry Pattern** - Centralized provider management and lookup
+
+See [Architecture Patterns](#architecture-patterns) section below for detailed explanation.
+
 ---
 
 ## 🎯 Architecture Options
@@ -21,13 +31,16 @@ This guide covers integrating external football data feeds (Opta, StatsBomb, API
                   ▼
 ┌─────────────────────────────────────────────────────────────┐
 │              YOUR GOLANG BACKEND                            │
-│  POST /api/v1/matches/:id/events                           │
+│  POST /webhooks/matches (WebhookHandler)                   │
+│  POST /api/v1/matches/:id/events (MatchHandler)            │
 │                                                             │
-│  MatchHandler.CreateMatchEvent()                           │
+│  WebhookHandler.HandleMatchEvents()                        │
 │         ↓                                                   │
-│  1. Save to PostgreSQL (sqlc)                              │
-│  2. Publish to Redis Streams (analytics)                   │
-│  3. Publish to Redis Pub/Sub (WebSocket)                   │
+│  1. Verify HMAC signature (security)                        │
+│  2. Validate match exists                                  │
+│  3. Save to PostgreSQL (sqlc)                              │
+│  4. Publish to Redis Streams (analytics)                   │
+│  5. Publish to Redis Pub/Sub (WebSocket)                   │
 └─────────────────┬───────────────────────────────────────────┘
                   │
         ┌─────────┴─────────┐
@@ -157,35 +170,75 @@ External Feed → Webhook → Your API → Database + Redis → WebSocket
 **Implementation:**
 
 ```go
-// POST /api/v1/webhooks/match-events
-func (h *WebhookHandler) ReceiveMatchEvent(c *gin.Context) {
+// POST /webhooks/matches
+func (h *WebhookHandler) HandleMatchEvents(c *gin.Context) {
+    // 1. Verify HMAC SHA256 signature (security)
+    if !h.verifySignature(c) {
+        c.JSON(401, gin.H{"error": "Invalid signature"})
+        return
+    }
+
+    // 2. Parse payload
     var payload ExternalEventPayload
     if err := c.ShouldBindJSON(&payload); err != nil {
         c.JSON(400, gin.H{"error": "Invalid payload"})
         return
     }
 
-    // 1. Validate webhook signature (security)
-    if !h.validateSignature(c.GetHeader("X-Signature"), payload) {
-        c.JSON(401, gin.H{"error": "Invalid signature"})
-        return
-    }
-
-    // 2. Transform external format to internal format
-    event := h.transformEvent(payload)
-
-    // 3. Save to database
-    savedEvent, err := h.queries.CreateMatchEvent(ctx, event)
+    // 3. Validate match exists
+    match, err := h.queries.GetMatchByID(ctx, payload.MatchID)
     if err != nil {
-        c.JSON(500, gin.H{"error": "Failed to save event"})
+        c.JSON(404, gin.H{"error": "Match not found"})
         return
     }
 
-    // 4. Publish to Redis (async)
-    go h.publisher.PublishMatchEvent(ctx, savedEvent)
+    // 4. Process asynchronously (respond quickly)
+    go h.processWebhookEventAsync(ctx, &payload, match.ID)
 
-    c.JSON(200, gin.H{"status": "received"})
+    // 5. Acknowledge immediately
+    c.JSON(200, gin.H{
+        "status": "accepted",
+        "match_id": payload.MatchID,
+        "event_type": payload.EventType,
+    })
 }
+```
+
+**Endpoints:**
+
+- `POST /webhooks/matches?provider=opta` - Receive match events from Opta
+- `POST /webhooks/matches?provider=statsbomb` - Receive match events from StatsBomb
+- `POST /webhooks/matches` - Generic provider (default)
+- `POST /webhooks/matches/:id/status` - Receive match status updates (live, finished, etc.)
+
+**Security:**
+
+- HMAC SHA256 signature verification via `X-Signature` header
+- Provider-specific secrets: `WEBHOOK_SECRET_OPTA`, `WEBHOOK_SECRET_STATSBOMB`
+- Default secret: `WEBHOOK_SECRET` (for generic provider)
+- Signature computed from request body + secret
+
+**Design Patterns Used:**
+
+1. **Adapter Pattern** - Each provider adapts external formats (Opta, StatsBomb) to internal format
+2. **Strategy Pattern** - Different extraction strategies per provider
+3. **Registry Pattern** - Centralized provider management and lookup
+
+```go
+// Provider interface (Adapter)
+type Provider interface {
+    ExtractEvent(ctx context.Context, payload []byte) (*events.MatchEvent, error)
+    VerifySignature(payload []byte, signature string, secret string) bool
+}
+
+// Registry (Strategy + Registry patterns)
+registry := webhooks.NewRegistry()
+registry.Register(providers.NewOptaProvider())
+registry.Register(providers.NewStatsBombProvider())
+
+// Handler selects provider strategy
+provider, _ := registry.GetProvider("opta")
+event, _ := provider.ExtractEvent(ctx, payload)
 ```
 
 ### Method 2: Polling (Fallback - Near Real-Time)
@@ -302,7 +355,7 @@ func (w *ExternalFeedClient) Connect(ctx context.Context) {
 
 ```javascript
 // lambda/webhook-receiver/index.js
-const AWS = require("aws-sdk");
+const AWS = require('aws-sdk');
 const kinesis = new AWS.Kinesis();
 
 exports.handler = async (event) => {
@@ -311,11 +364,11 @@ exports.handler = async (event) => {
     const payload = JSON.parse(event.body);
 
     // 2. Validate signature
-    const signature = event.headers["X-Signature"];
+    const signature = event.headers['X-Signature'];
     if (!validateSignature(payload, signature)) {
       return {
         statusCode: 401,
-        body: JSON.stringify({ error: "Invalid signature" }),
+        body: JSON.stringify({ error: 'Invalid signature' }),
       };
     }
 
@@ -332,7 +385,7 @@ exports.handler = async (event) => {
     // 4. Publish to Kinesis
     await kinesis
       .putRecord({
-        StreamName: "match-events-stream",
+        StreamName: 'match-events-stream',
         PartitionKey: payload.match_id, // Events for same match go to same shard
         Data: JSON.stringify(matchEvent),
       })
@@ -340,23 +393,23 @@ exports.handler = async (event) => {
 
     return {
       statusCode: 200,
-      body: JSON.stringify({ status: "received" }),
+      body: JSON.stringify({ status: 'received' }),
     };
   } catch (error) {
-    console.error("Error processing webhook:", error);
+    console.error('Error processing webhook:', error);
     return {
       statusCode: 500,
-      body: JSON.stringify({ error: "Internal error" }),
+      body: JSON.stringify({ error: 'Internal error' }),
     };
   }
 };
 
 function validateSignature(payload, signature) {
-  const crypto = require("crypto");
+  const crypto = require('crypto');
   const secret = process.env.WEBHOOK_SECRET;
-  const hmac = crypto.createHmac("sha256", secret);
+  const hmac = crypto.createHmac('sha256', secret);
   hmac.update(JSON.stringify(payload));
-  const expectedSignature = hmac.digest("hex");
+  const expectedSignature = hmac.digest('hex');
   return signature === expectedSignature;
 }
 ```
@@ -934,3 +987,113 @@ Feed → Backend → PostgreSQL + Redis → WebSocket → Angular
 **Status:** ✅ Architecture Ready - Just add webhook endpoint!
 **Complexity:** 🟢 Simple (exactly what you need)
 **Time to Implement:** 2-4 hours
+
+---
+
+## 🎯 Architecture Patterns
+
+### Adapter Pattern
+
+Each provider implements the `Provider` interface to adapt external formats:
+
+```go
+// Provider interface (Adapter contract)
+type Provider interface {
+    ExtractEvent(ctx context.Context, payload []byte) (*events.MatchEvent, error)
+    VerifySignature(payload []byte, signature string, secret string) bool
+}
+
+// OptaProvider adapts Opta's nested JSON structure
+type OptaProvider struct{}
+func (p *OptaProvider) ExtractEvent(ctx context.Context, payload []byte) (*events.MatchEvent, error) {
+    // Transform: Opta format → Internal MatchEvent
+    var optaPayload OptaPayload
+    json.Unmarshal(payload, &optaPayload)
+    // ... normalization logic
+    return &events.MatchEvent{...}, nil
+}
+
+// StatsBombProvider adapts StatsBomb's flat structure
+type StatsBombProvider struct{}
+func (p *StatsBombProvider) ExtractEvent(ctx context.Context, payload []byte) (*events.MatchEvent, error) {
+    // Transform: StatsBomb format → Internal MatchEvent
+    var sbPayload StatsBombPayload
+    json.Unmarshal(payload, &sbPayload)
+    // ... normalization logic
+    return &events.MatchEvent{...}, nil
+}
+```
+
+**Why Adapter Pattern?**
+
+- ✅ Each provider has different JSON structure
+- ✅ Isolates transformation logic per provider
+- ✅ Easy to add new providers without changing existing code
+
+### Strategy Pattern
+
+The registry allows selecting different extraction strategies:
+
+```go
+// Registry manages provider strategies
+registry := webhooks.NewRegistry()
+registry.Register(providers.NewOptaProvider())      // Strategy 1: Nested JSON
+registry.Register(providers.NewStatsBombProvider()) // Strategy 2: Flat JSON
+registry.Register(providers.NewGenericProvider())    // Strategy 3: Standard format
+
+// Handler selects strategy at runtime
+providerName := c.Query("provider") // "opta", "statsbomb", "generic"
+provider, _ := registry.GetProvider(providerName)
+event, _ := provider.ExtractEvent(ctx, payload)
+```
+
+**Why Strategy Pattern?**
+
+- ✅ Runtime provider selection
+- ✅ Interchangeable algorithms (extraction strategies)
+- ✅ No conditional logic in handlers
+
+### Registry Pattern
+
+Centralized provider management:
+
+```go
+type Registry struct {
+    providers map[string]Provider
+}
+
+func (r *Registry) Register(provider Provider) {
+    r.providers[strings.ToLower(provider.Name())] = provider
+}
+
+func (r *Registry) GetProvider(name string) (Provider, error) {
+    provider, exists := r.providers[strings.ToLower(name)]
+    if !exists {
+        return nil, fmt.Errorf("provider %s not found", name)
+    }
+    return provider, nil
+}
+```
+
+**Why Registry Pattern?**
+
+- ✅ Single source of truth for providers
+- ✅ Easy provider lookup
+- ✅ Supports dynamic provider registration
+- ✅ List available providers for API documentation
+
+### Pattern Combination Benefits
+
+| Pattern      | Purpose               | Benefit                             |
+| ------------ | --------------------- | ----------------------------------- |
+| **Adapter**  | Format transformation | Isolates provider-specific logic    |
+| **Strategy** | Algorithm selection   | Runtime provider switching          |
+| **Registry** | Provider management   | Centralized lookup and registration |
+
+**Together they provide:**
+
+- ✅ **Extensibility**: Add new providers without touching existing code
+- ✅ **Maintainability**: Each provider is self-contained
+- ✅ **Testability**: Mock providers easily
+- ✅ **Flexibility**: Support multiple providers simultaneously
+- ✅ **Type Safety**: All providers return normalized format

@@ -166,7 +166,36 @@ A **production-ready football analytics platform** using industry-standard techn
 
 ## 🏗️ Architecture Patterns
 
-### 1. Repository Pattern (via sqlc)
+### 1. Provider Pattern (Adapter + Strategy + Registry)
+
+For handling multiple external data feed providers, we use a combination of three design patterns:
+
+**Adapter Pattern** - Transforms external formats (Opta, StatsBomb, API-Football) to our internal format
+**Strategy Pattern** - Different extraction strategies per provider
+**Registry Pattern** - Centralized provider management
+
+```go
+// Each provider adapts its format
+type Provider interface {
+    ExtractEvent(ctx context.Context, payload []byte) (*events.MatchEvent, error)
+}
+
+// Registry manages providers
+registry.Register(providers.NewOptaProvider())
+registry.Register(providers.NewStatsBombProvider())
+
+// Handler selects provider strategy
+provider, _ := registry.GetProvider("opta")
+```
+
+**Benefits:**
+
+- ✅ Extensible: Add new providers without changing existing code
+- ✅ Decoupled: Each provider is independent
+- ✅ Provider-specific secrets: `WEBHOOK_SECRET_OPTA`, `WEBHOOK_SECRET_STATSBOMB`
+- ✅ Type-safe: All providers return normalized internal format
+
+### 2. Repository Pattern (via sqlc)
 
 **What it is:** Abstraction layer between business logic and data access
 

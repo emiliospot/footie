@@ -19,6 +19,7 @@ type Config struct {
 	Redis    RedisConfig
 	JWT      JWTConfig
 	CORS     CORSConfig
+	Webhook  WebhookConfig
 }
 
 // AppConfig holds application-level configuration.
@@ -65,6 +66,15 @@ type JWTConfig struct {
 type CORSConfig struct {
 	AllowedOrigins   []string
 	AllowCredentials bool
+}
+
+// WebhookConfig holds webhook configuration.
+type WebhookConfig struct {
+	// DefaultSecret is used for generic providers or when provider-specific secret is not set
+	DefaultSecret string
+	// ProviderSecrets maps provider names to their specific secrets
+	// Example: "opta" -> "opta-secret-key", "statsbomb" -> "statsbomb-secret-key"
+	ProviderSecrets map[string]string
 }
 
 // LogConfig holds logging configuration.
@@ -138,6 +148,10 @@ func Load() (*Config, error) {
 			SecretAccessKey:  getEnv("AWS_SECRET_ACCESS_KEY", ""),
 			S3Bucket:         getEnv("AWS_S3_BUCKET", ""),
 			CloudFrontDomain: getEnv("AWS_CLOUDFRONT_DOMAIN", ""),
+		},
+		Webhook: WebhookConfig{
+			DefaultSecret: getEnv("WEBHOOK_SECRET", ""), // Default secret for generic providers
+			ProviderSecrets: parseProviderSecrets(),      // Parse provider-specific secrets
 		},
 	}
 
@@ -216,4 +230,35 @@ func getEnvAsBool(key string, defaultValue bool) bool {
 		return defaultValue
 	}
 	return value
+}
+
+// parseProviderSecrets parses provider-specific webhook secrets from environment variables.
+// Format: WEBHOOK_SECRET_<PROVIDER_NAME>=secret_value
+// Example: WEBHOOK_SECRET_OPTA=opta-secret-key
+//          WEBHOOK_SECRET_STATSBOMB=statsbomb-secret-key
+func parseProviderSecrets() map[string]string {
+	secrets := make(map[string]string)
+	prefix := "WEBHOOK_SECRET_"
+
+	// Iterate through all environment variables
+	for _, env := range os.Environ() {
+		parts := strings.SplitN(env, "=", 2)
+		if len(parts) != 2 {
+			continue
+		}
+
+		key := parts[0]
+		value := parts[1]
+
+		// Check if it's a provider-specific secret
+		if strings.HasPrefix(key, prefix) {
+			// Extract provider name (e.g., "OPTA" from "WEBHOOK_SECRET_OPTA")
+			providerName := strings.TrimPrefix(key, prefix)
+			// Normalize to lowercase for consistency
+			providerName = strings.ToLower(providerName)
+			secrets[providerName] = value
+		}
+	}
+
+	return secrets
 }

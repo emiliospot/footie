@@ -16,6 +16,8 @@ import (
 	"github.com/emiliospot/footie/api/internal/api/middleware"
 	"github.com/emiliospot/footie/api/internal/config"
 	"github.com/emiliospot/footie/api/internal/infrastructure/logger"
+	"github.com/emiliospot/footie/api/internal/infrastructure/webhooks"
+	"github.com/emiliospot/footie/api/internal/infrastructure/webhooks/providers"
 	ws "github.com/emiliospot/footie/api/internal/infrastructure/websocket"
 )
 
@@ -56,12 +58,24 @@ func NewRouter(cfg *config.Config, pool *pgxpool.Pool, redis *redis.Client, hub 
 	// Initialize base handler with common dependencies
 	baseHandler := handlers.NewBaseHandler(cfg, pool, redis, logger)
 
+	// Initialize webhook provider registry
+	providerRegistry := webhooks.NewRegistry()
+	providerRegistry.Register(providers.NewGenericProvider())
+	providerRegistry.Register(providers.NewOptaProvider())
+	providerRegistry.Register(providers.NewStatsBombProvider())
+
 	// Initialize handlers
 	healthHandler := handlers.NewHealthHandler(baseHandler)
 	matchHandler := handlers.NewMatchHandler(baseHandler)
+	webhookHandler := handlers.NewWebhookHandler(baseHandler, &cfg.Webhook, providerRegistry)
 
 	// Health check endpoint
 	router.GET("/health", healthHandler.Check)
+
+	// Webhook endpoints (public, but signature-verified)
+	webhooks := router.Group("/webhooks")
+	webhooks.POST("/matches", webhookHandler.HandleMatchEvents)
+	webhooks.POST("/matches/:id/status", webhookHandler.HandleMatchStatus)
 
 	// WebSocket endpoint for real-time match updates
 	router.GET("/ws/matches/:id", func(c *gin.Context) {

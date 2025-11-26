@@ -218,7 +218,93 @@ func NewBaseHandler(
 - ✅ Easy to test
 - ✅ Clear dependency graph
 
-### 4. **Clean Separation of Concerns**
+### 4. **Provider Pattern** (Adapter + Strategy + Registry)
+
+For handling multiple external data feed providers (Opta, StatsBomb, API-Football, etc.), we use a combination of three design patterns:
+
+#### **Adapter Pattern** - Format Transformation
+
+Each provider adapts external formats to our internal format:
+
+```go
+// Provider interface - defines the contract
+type Provider interface {
+    ExtractEvent(ctx context.Context, payload []byte) (*events.MatchEvent, error)
+    VerifySignature(payload []byte, signature string, secret string) bool
+}
+
+// OptaProvider adapts Opta's format
+type OptaProvider struct{}
+func (p *OptaProvider) ExtractEvent(ctx context.Context, payload []byte) (*events.MatchEvent, error) {
+    // Transform Opta JSON → Internal MatchEvent
+}
+
+// StatsBombProvider adapts StatsBomb's format
+type StatsBombProvider struct{}
+func (p *StatsBombProvider) ExtractEvent(ctx context.Context, payload []byte) (*events.MatchEvent, error) {
+    // Transform StatsBomb JSON → Internal MatchEvent
+}
+```
+
+#### **Strategy Pattern** - Provider Selection
+
+Different providers use different strategies for extraction:
+
+```go
+// Registry manages provider strategies
+registry := webhooks.NewRegistry()
+registry.Register(providers.NewOptaProvider())      // Strategy 1
+registry.Register(providers.NewStatsBombProvider()) // Strategy 2
+registry.Register(providers.NewGenericProvider())    // Strategy 3
+
+// Handler selects strategy based on provider name
+provider, _ := registry.GetProvider("opta")
+event, _ := provider.ExtractEvent(ctx, payload)
+```
+
+#### **Registry Pattern** - Provider Management
+
+Centralized provider lookup and management:
+
+```go
+type Registry struct {
+    providers map[string]Provider
+}
+
+func (r *Registry) Register(provider Provider) {
+    r.providers[strings.ToLower(provider.Name())] = provider
+}
+
+func (r *Registry) GetProvider(name string) (Provider, error) {
+    return r.providers[strings.ToLower(name)], nil
+}
+```
+
+**Benefits:**
+
+- ✅ **Extensible**: Add new providers without changing existing code
+- ✅ **Decoupled**: Each provider is independent
+- ✅ **Testable**: Mock providers easily
+- ✅ **Type-safe**: All providers return the same internal format
+- ✅ **Provider-specific secrets**: Each provider can have its own webhook secret
+
+**Flow:**
+
+```
+External Webhook (Opta/StatsBomb/Generic)
+    ↓
+Provider.ExtractEvent()  ← Adapter Pattern (format transformation)
+    ↓
+Internal MatchEvent format (normalized)
+    ↓
+Handler.processProviderEventAsync()
+    ↓
+queries.CreateMatchEvent()  ← Repository Pattern (data persistence)
+    ↓
+PostgreSQL Database
+```
+
+### 5. **Clean Separation of Concerns**
 
 ```
 ┌─────────────────────────────────────────────┐

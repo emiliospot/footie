@@ -15,7 +15,9 @@ type MatchEvent struct {
 	SecondaryPlayerID *int32          `json:"secondary_player_id,omitempty"`
 	EventType         string          `json:"event_type"`
 	Minute            int32           `json:"minute"`
+	Second            *int32          `json:"second,omitempty"` // Exact second (0-59)
 	ExtraMinute       *int32          `json:"extra_minute,omitempty"`
+	Period            string          `json:"period,omitempty"` // first_half, second_half, extra_time_first, extra_time_second, penalties
 	PositionX         *float64        `json:"position_x,omitempty"`
 	PositionY         *float64        `json:"position_y,omitempty"`
 	Description       *string         `json:"description,omitempty"`
