@@ -1,6 +1,6 @@
 # ⚽ Footie - Football Analytics Platform
 
-**Professional Nx monorepo** with Golang backend, Angular 19 frontend, and enterprise-grade architecture.
+**Professional Nx monorepo** with Golang backend, Angular 20 frontend, and enterprise-grade architecture.
 
 ---
 
@@ -33,7 +33,9 @@ npm run dev
 workspace/
 ├── apps/
 │   ├── api/              # Golang backend with Air hot-reload
-│   ├── web/              # Angular 19 frontend
+│   ├── web/              # Angular 20 frontend
+│   │   └── src/app/features/
+│   │       └── rankings/ # Competition Rankings feature
 │   └── web-e2e/          # Playwright E2E tests
 ├── libs/
 │   └── shared/           # Shared TypeScript types
@@ -106,7 +108,7 @@ npx nx affected:build # Build only affected code
 
 ### Frontend
 
-- **Angular 19** with standalone components
+- **Angular 20** with standalone components
 - **TypeScript** (strict mode)
 - **RxJS 7** for reactive programming
 - **Angular Material** for UI components
@@ -124,11 +126,12 @@ npx nx affected:build # Build only affected code
 ## ✨ Key Features
 
 - ⚡ **Air Hot-Reload** - Golang rebuilds in < 1 second
-- 🚀 **Angular 19 HMR** - Instant frontend updates
+- 🚀 **Angular 20 HMR** - Instant frontend updates
 - 🔥 **sqlc + pgx** - Type-safe SQL, 3-5x faster (used by betting companies)
 - 🗄️ **golang-migrate** - Version-controlled database migrations
 - 📡 **Real-Time WebSockets** - Sub-second match event updates
 - 🔴 **Redis Streams + Pub/Sub** - Event processing & broadcasting
+- 📊 **Competition Rankings** - Team and player rankings across performance categories (xG, shots, passes, interceptions, etc.)
 - 🧪 **Comprehensive Testing** - Unit, integration, and E2E tests
 - 📦 **Nx Monorepo** - Build caching and affected commands
 - 🐳 **Docker Ready** - Local development infrastructure
@@ -200,6 +203,9 @@ GET    /api/v1/matches/:id          # Get match details
 GET    /api/v1/matches/:id/events   # Get match events
 POST   /api/v1/matches/:id/events   # Create event (broadcasts in real-time!)
 
+# Rankings Endpoints
+GET    /api/v1/rankings              # Get competition rankings (team/player, category, championship, season)
+
 # WebSocket (Real-Time)
 WS     /ws/matches/:id               # Connect to live match updates
 ```
@@ -226,6 +232,28 @@ This will:
 2. ✅ Publish to Redis Streams (for analytics)
 3. ✅ Broadcast via Redis Pub/Sub (for WebSocket)
 4. ✅ Push to all connected WebSocket clients instantly
+
+### Example: Get Competition Rankings
+
+```bash
+# Get team rankings for attacking category
+curl "http://localhost:8088/api/v1/rankings?type=team&category=attacking"
+
+# Get player rankings for defending category
+curl "http://localhost:8088/api/v1/rankings?type=player&category=defending"
+
+# With championship and season filters
+curl "http://localhost:8088/api/v1/rankings?type=team&category=attacking&championship=Cyprus%20U19%20League%20Division%201&season=2025/2026"
+```
+
+**Response includes:**
+
+- Top 5 teams/players per performance category
+- Multiple categories: xG, Shots, Crosses, Passes, Interceptions, etc.
+- Team logos and player avatars
+- Responsive grid layout with smooth animations
+
+See **[apps/web/src/app/features/rankings/README.md](apps/web/src/app/features/rankings/README.md)** for complete documentation.
 
 ### TODO Endpoints (Future)
 
@@ -254,6 +282,8 @@ POST   /api/v1/players
 PUT    /api/v1/players/:id
 GET    /api/v1/players/:id/statistics
 ```
+
+**Note:** The Rankings endpoint (`GET /api/v1/rankings`) is fully implemented and working. See the example above and the [rankings feature documentation](apps/web/src/app/features/rankings/README.md) for details.
 
 ---
 
@@ -323,7 +353,7 @@ Infrastructure includes:
 - **Raw SQL queries** optimized for football analytics
 - **Indexes** for xG, shots, passes, and statistics
 
-### Redis 7
+### Redis 8
 
 - **Caching** - Match data, player stats, team info
 - **Redis Streams** - Event processing pipeline
@@ -362,6 +392,10 @@ Infrastructure includes:
 - **[apps/api/REALTIME_ARCHITECTURE.md](apps/api/REALTIME_ARCHITECTURE.md)** - WebSocket + Redis Streams architecture
 - **[apps/api/MIGRATION_STATUS.md](apps/api/MIGRATION_STATUS.md)** - GORM → sqlc migration tracker
 
+### Frontend Features
+
+- **[apps/web/src/app/features/rankings/README.md](apps/web/src/app/features/rankings/README.md)** - Competition Rankings feature documentation
+
 ### Testing & Infrastructure
 
 - **[docs/TESTING_STRATEGY.md](docs/TESTING_STRATEGY.md)** - Testing approach
@@ -387,4 +421,4 @@ For questions or issues:
 
 **Built with ❤️ for football analytics**
 
-_Powered by Nx, Golang, and Angular 19_
+_Powered by Nx, Golang, and Angular 20_

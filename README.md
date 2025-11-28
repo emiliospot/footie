@@ -1,6 +1,6 @@
 # ⚽ Footie - Football Analytics Platform
 
-> **Professional Nx monorepo** with Golang backend, Angular 19 frontend, and enterprise-grade architecture.
+> **Professional Nx monorepo** with Golang backend, Angular 20 frontend, and enterprise-grade architecture.
 
 ---
 
@@ -40,11 +40,11 @@ footie/
 │   │   │   ├── sqlc.yaml          # sqlc configuration
 │   │   │   ├── Makefile           # Backend commands
 │   │   │   └── README_SQLC.md     # sqlc + pgx guide
-│   │   ├── web/                   # Angular 19 frontend
+│   │   ├── web/                   # Angular 20 frontend
 │   │   │   ├── src/
 │   │   │   │   ├── app/
 │   │   │   │   │   ├── core/      # Guards, interceptors, services, models
-│   │   │   │   │   ├── features/  # Feature modules (auth, matches, players, teams)
+│   │   │   │   │   ├── features/  # Feature modules (auth, matches, players, teams, rankings)
 │   │   │   │   │   └── shared/    # Shared components
 │   │   │   │   └── environments/  # Environment configs
 │   │   │   └── angular.json
@@ -82,10 +82,11 @@ footie/
 ## ✨ Key Features
 
 - ⚡ **Air Hot-Reload** for Golang (< 1s rebuild)
-- 🚀 **Angular 19** with HMR
+- 🚀 **Angular 20** with HMR
 - 🔥 **sqlc + pgx** - Type-safe SQL with 3-5x faster queries (industry standard for analytics)
 - 🗄️ **golang-migrate** - Production-grade database migrations
 - 📡 **Real-Time WebSockets** - Sub-second match updates with Redis Streams & Pub/Sub
+- 📊 **Competition Rankings** - Team and player rankings across performance categories (xG, shots, passes, etc.)
 - 🧪 **Comprehensive Testing** (unit, integration, E2E)
 - 📦 **Nx Monorepo** (build caching, affected commands)
 - 🐳 **Docker** ready for local development
@@ -109,7 +110,7 @@ footie/
 
 ### Frontend
 
-- **Angular 19** with standalone components
+- **Angular 20** with standalone components
 - **TypeScript** (strict mode)
 - **RxJS 7** for reactive programming
 - **Angular Material** for UI
@@ -147,6 +148,10 @@ footie/
 - **[workspace/apps/api/README_SQLC.md](workspace/apps/api/README_SQLC.md)** - sqlc + pgx + golang-migrate complete guide
 - **[workspace/apps/api/REALTIME_ARCHITECTURE.md](workspace/apps/api/REALTIME_ARCHITECTURE.md)** - WebSocket + Redis Streams architecture
 - **[workspace/apps/api/MIGRATION_STATUS.md](workspace/apps/api/MIGRATION_STATUS.md)** - GORM → sqlc migration tracker
+
+### 🎯 Frontend Features
+
+- **[workspace/apps/web/src/app/features/rankings/README.md](workspace/apps/web/src/app/features/rankings/README.md)** - Competition Rankings feature documentation
 
 ### 🎯 Product & Strategy
 

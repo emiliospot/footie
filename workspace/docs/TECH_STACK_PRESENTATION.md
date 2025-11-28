@@ -37,7 +37,7 @@ A **production-ready football analytics platform** using industry-standard techn
 ### Current Status
 
 - ✅ **Backend:** Real-time match event system operational
-- ✅ **Frontend:** Angular 19 with modern architecture
+- ✅ **Frontend:** Angular 20 with modern architecture
 - ✅ **Database:** PostgreSQL 16 with optimized analytics queries
 - ✅ **Real-time:** WebSocket + Redis Streams + Pub/Sub
 - ⏳ **Phase 1:** 80% complete (missing auth, user, team, player handlers)
@@ -96,11 +96,11 @@ A **production-ready football analytics platform** using industry-standard techn
 
 ---
 
-### Frontend (Angular 19)
+### Frontend (Angular 20)
 
 #### Framework
 
-- **Angular 19** with standalone components
+- **Angular 20** with standalone components
   - **Why:** Enterprise-grade, TypeScript-first, dependency injection
   - **Used by:** Google, Microsoft, Forbes, Weather.com
   - **Alternative:** React, Vue (chose Angular for structure + DI)
@@ -384,7 +384,7 @@ Match Event Created
 
 #### Frontend
 
-- ✅ **Framework:** Angular 19 with standalone components
+- ✅ **Framework:** Angular 20 with standalone components
 - ✅ **Development:** HMR (Hot Module Replacement)
 - ✅ **Build System:** Nx with caching
 - ✅ **Linting:** ESLint + Prettier
@@ -765,7 +765,7 @@ All technical documentation is available in `workspace/docs/`:
 ### What We Have
 
 - ✅ Production-ready backend (Go + sqlc + pgx)
-- ✅ Modern frontend (Angular 19)
+- ✅ Modern frontend (Angular 20)
 - ✅ Real-time system (WebSocket + Redis)
 - ✅ Scalable architecture (AWS-native)
 - ✅ Industry-proven stack (betting companies use this)

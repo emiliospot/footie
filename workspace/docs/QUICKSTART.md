@@ -111,7 +111,7 @@ npx nx affected:build       # Build only changed code
 workspace/
 ├── apps/
 │   ├── api/          # Golang backend
-│   ├── web/          # Angular 19 frontend
+│   ├── web/          # Angular 20 frontend
 │   └── web-e2e/      # Playwright E2E tests
 ├── libs/
 │   └── shared/       # Shared TypeScript types
@@ -123,9 +123,9 @@ workspace/
 ## 🎯 What's Included
 
 ✅ **Air** hot-reload for Golang
-✅ **Angular 19** with HMR
+✅ **Angular 20** with HMR
 ✅ **Repository pattern** (abstracted DB)
-✅ **PostgreSQL 16** + **Redis 7**
+✅ **PostgreSQL 16** + **Redis 8**
 ✅ **Complete testing** (unit, integration, E2E)
 ✅ **Nx monorepo** (caching, affected commands)
 ✅ **Docker** ready

@@ -67,7 +67,7 @@ I've prepared comprehensive documentation to help you understand the technical a
 
 **Frontend:**
 
-- Angular 19 with standalone components
+- Angular 20 with standalone components
 - Nx monorepo with build caching
 - Material Design UI
 - TypeScript strict mode
@@ -108,7 +108,7 @@ This isn't just another CRUD app—it's built with the **same technologies used 
 
 **Frontend:**
 
-- Angular 19 with standalone components
+- Angular 20 with standalone components
 - RxJS 7 for reactive programming
 - Angular Material for UI
 - Playwright for E2E testing
@@ -187,7 +187,7 @@ One of the biggest advantages of this architecture:
 
 ### For Developers
 
-- **Modern stack:** Latest technologies (Angular 19, Go 1.21, Redis 8)
+- **Modern stack:** Latest technologies (Angular 20, Go 1.21, Redis 8)
 - **Type-safe:** Compile-time error checking (sqlc, TypeScript)
 - **Fast feedback:** < 1 second hot-reload
 - **Well-documented:** Comprehensive guides

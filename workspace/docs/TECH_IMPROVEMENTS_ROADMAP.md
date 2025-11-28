@@ -458,7 +458,7 @@ export class WebSocketService {
 }
 ```
 
-#### Signals Integration (Angular 19)
+#### Signals Integration (Angular 20)
 
 ```typescript
 export class MatchLiveComponent {
