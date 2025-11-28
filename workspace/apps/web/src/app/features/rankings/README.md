@@ -5,6 +5,7 @@ This feature implements the "Competition Rankings" card component as specified i
 ## Overview
 
 The Competition Rankings component shows:
+
 - **Team Rankings**: Top 5 teams for various metrics (xG, Shots, Crosses, etc.)
 - **Player Rankings**: Top 5 players for various metrics with avatars
 - **Categories**: Attacking, Defending, Distribution, Goalkeeper, Insights
@@ -40,57 +41,110 @@ The Competition Rankings component shows:
 
 ### Starting the Backend API
 
-1. **Navigate to API directory:**
-   ```bash
-   cd workspace/apps/api
-   ```
+**Important:** All npm commands must be run from the `workspace` directory, not the project root.
 
-2. **Start the API server:**
-   ```bash
-   # Option 1: Using Go directly
-   go run cmd/api/main.go
-   
-   # Option 2: Using Make (if available)
-   make run
-   
-   # Option 3: Using Air for hot-reload (if installed)
-   make dev
-   ```
+**Option 1: Using npm script (recommended - from workspace directory):**
 
-3. **The API will start on:** `http://localhost:8088`
+```bash
+# Navigate to workspace directory first
+cd workspace
 
-4. **Test the health endpoint:**
-   ```bash
-   curl http://localhost:8088/health
-   ```
+# Then run the API
+npm run api
+```
 
-5. **Test the rankings endpoint:**
-   ```bash
-   curl "http://localhost:8088/api/v1/rankings?type=team&category=attacking"
-   ```
+This uses Nx (`nx run api:serve`) to run the API with Air hot-reload.
+
+**Option 2: Using VSCode Tasks (if using VSCode):**
+
+1. Press `Ctrl+Shift+P` (or `Cmd+Shift+P` on Mac)
+2. Type "Tasks: Run Task"
+3. Select "Dev: Backend Only"
+
+This runs `npm run api` which uses Nx internally.
+
+**Option 3: Using Make (optional - from API directory):**
+
+Make is usually pre-installed on Linux/Mac. If you don't have it, skip to Option 4.
+
+**Note:** `make dev` requires Air to be installed. Install it first with:
+
+```bash
+cd workspace/apps/api
+make install  # Installs Air and other Go tools
+```
+
+Then you can use:
+
+```bash
+cd workspace/apps/api
+
+# Run directly (no Air needed)
+make run
+
+# Run with hot-reload (requires Air)
+make dev
+```
+
+**Option 4: Using Go directly (from API directory):**
+
+```bash
+cd workspace/apps/api
+go run cmd/api/main.go
+```
+
+**Note:** Option 1 (npm script) is recommended as it works consistently across all platforms and uses Nx for task orchestration.
+
+**Note:** The rankings endpoint uses mock data, so you can run the API without a database by setting environment variables:
+
+```bash
+SKIP_DB=true SKIP_REDIS=true npm run api
+```
+
+**The API will start on:** `http://localhost:8088`
+
+**Test the health endpoint:**
+
+```bash
+curl http://localhost:8088/health
+```
+
+**Test the rankings endpoint:**
+
+```bash
+curl "http://localhost:8088/api/v1/rankings?type=team&category=attacking"
+```
 
 ### Starting the Frontend (Angular)
 
-1. **Navigate to workspace root:**
-   ```bash
-   cd workspace
-   ```
+**Important:** All npm commands must be run from the `workspace` directory, not the project root.
 
-2. **Install dependencies (if not already done):**
-   ```bash
-   npm install
-   ```
+**Option 1: Using npm script (from workspace directory):**
 
-3. **Start the development server:**
-   ```bash
-   npm run web
-   # OR
-   nx run web:serve
-   ```
+```bash
+# Navigate to workspace directory first
+cd workspace
 
-4. **The app will start on:** `http://localhost:4200`
+# Install dependencies (if not already done)
+npm install
 
-5. **Navigate to:** `http://localhost:4200/dashboard` to see the Competition Rankings component
+# Start the development server
+npm run web
+```
+
+This uses Nx (`nx run web:serve`) to run the Angular dev server.
+
+**Option 2: Using VSCode Tasks (if using VSCode):**
+
+1. Press `Ctrl+Shift+P` (or `Cmd+Shift+P` on Mac)
+2. Type "Tasks: Run Task"
+3. Select "Dev: Frontend Only"
+
+**The app will start on:** `http://localhost:4200`
+
+**Navigate to:** `http://localhost:4200/dashboard` to see the Competition Rankings component
+
+**Note:** The dashboard route is currently public (auth guard disabled for development).
 
 ### Using Docker Compose (Optional)
 
@@ -110,11 +164,13 @@ docker compose -f workspace/infra/docker/docker-compose.yml up -d postgres redis
 ## API Endpoints
 
 ### Health Check
+
 ```
 GET /health
 ```
 
 **Response:**
+
 ```json
 {
   "status": "healthy",
@@ -123,17 +179,20 @@ GET /health
 ```
 
 ### Get Competition Rankings
+
 ```
 GET /api/v1/rankings?type=team&category=attacking&championship=Cyprus%20U19%20League%20Division%201&season=2025/2026
 ```
 
 **Query Parameters:**
+
 - `type` (optional): `team` or `player` (default: `team`)
 - `category` (optional): `attacking`, `defending`, `distribution`, `goalkeeper`, `insights` (default: `attacking`)
 - `championship` (optional): Championship name
 - `season` (optional): Season
 
 **Response:**
+
 ```json
 {
   "type": "team",
@@ -195,4 +254,3 @@ rankings/
 - Add export functionality (CSV, PDF)
 - Add charts and visualizations
 - Implement real-time updates via WebSocket
-

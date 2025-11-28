@@ -110,10 +110,12 @@
   // ==========================================
   // FILE ASSOCIATIONS
   // ==========================================
+  // Treat .air.toml as plaintext to disable TOML schema validation
+  // Air validates its own config files at runtime
   "files.associations": {
     "*.toml": "toml",
     ".golangci.yml": "yaml",
-    ".air.toml": "toml"
+    ".air.toml": "plaintext"
   },
 
   // ==========================================
@@ -126,7 +128,6 @@
   // ==========================================
   // TOML SCHEMAS
   // ==========================================
-  "toml.schemas": {
-    "./.vscode/air-schema.json": ["**/apps/api/.air.toml"]
-  }
+  // Air config files don't need schema validation - Air validates them at runtime
+  "toml.schemas": {}
 }

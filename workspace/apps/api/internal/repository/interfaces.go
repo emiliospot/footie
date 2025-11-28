@@ -11,10 +11,10 @@ import (
 // UserRepository defines the interface for user data operations.
 type UserRepository interface {
 	Create(ctx context.Context, user *models.User) error
-	FindByID(ctx context.Context, id uint) (*models.User, error)
+	FindByID(ctx context.Context, id int32) (*models.User, error)
 	FindByEmail(ctx context.Context, email string) (*models.User, error)
 	Update(ctx context.Context, user *models.User) error
-	Delete(ctx context.Context, id uint) error
+	Delete(ctx context.Context, id int32) error
 	List(ctx context.Context, offset, limit int) ([]models.User, int64, error)
 }
 

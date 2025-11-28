@@ -1,18 +1,17 @@
-import { Injectable } from "@angular/core";
 import { HttpClient, HttpParams } from "@angular/common/http";
-import { Observable } from "rxjs";
+import { Injectable, inject } from "@angular/core";
 import { environment } from "@environments/environment";
-import { Team, TeamStatistics } from "../models/team.model";
-import { Player } from "../models/player.model";
+import { Observable } from "rxjs";
 import { PaginatedResponse } from "../models/api-response.model";
+import { Player } from "../models/player.model";
+import { Team, TeamStatistics } from "../models/team.model";
 
 @Injectable({
   providedIn: "root",
 })
 export class TeamService {
   private readonly apiUrl = `${environment.apiUrl}/teams`;
-
-  constructor(private readonly http: HttpClient) {}
+  private readonly http = inject(HttpClient);
 
   public getTeams(
     page: number = 1,

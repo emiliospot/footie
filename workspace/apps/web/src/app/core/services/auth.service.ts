@@ -1,7 +1,7 @@
-import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
-import { Observable, BehaviorSubject, tap } from "rxjs";
+import { Injectable, inject } from "@angular/core";
 import { environment } from "@environments/environment";
+import { BehaviorSubject, Observable, tap } from "rxjs";
 import {
   AuthResponse,
   LoginRequest,
@@ -14,13 +14,13 @@ import {
 })
 export class AuthService {
   public readonly currentUser$: Observable<User | null>;
-
   private readonly apiUrl = environment.apiUrl;
+  private readonly http = inject(HttpClient);
   private readonly currentUserSubject = new BehaviorSubject<User | null>(
     this.getUserFromStorage(),
   );
 
-  constructor(private readonly http: HttpClient) {
+  constructor() {
     this.currentUser$ = this.currentUserSubject.asObservable();
   }
 

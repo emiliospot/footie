@@ -19,9 +19,9 @@ yarn-debug.log*
 yarn-error.log*
 
 # Backend (Go)
-backend/bin/
-backend/tmp/
-backend/vendor/
+workspace/apps/api/bin/
+workspace/apps/api/tmp/
+workspace/apps/api/vendor/
 *.exe
 *.exe~
 *.dll
@@ -31,12 +31,13 @@ backend/vendor/
 *.out
 go.work
 
-# Frontend (Angular)
-frontend/node_modules/
-frontend/dist/
-frontend/.angular/
-frontend/coverage/
-frontend/.cache/
+# Frontend (Angular/TypeScript)
+workspace/.angular/
+workspace/apps/web/.angular/
+workspace/*.tsbuildinfo
+workspace/apps/web/dist/
+workspace/apps/web/coverage/
+workspace/apps/web/.cache/
 
 # Database
 *.db

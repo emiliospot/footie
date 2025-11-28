@@ -6,7 +6,7 @@
     {
       "type": "shell",
       "label": "Kill: Backend (Air + API)",
-      "command": "pkill -9 -f 'air|nx run api:serve' && echo '✅ Killed backend processes' || echo 'ℹ️  No backend processes running'",
+      "command": "pkill -9 -f 'air|nx run api:serve|apps/api/tmp/main' || (lsof -ti :8088 | xargs -r kill -9) || echo 'ℹ️  No backend processes running' && echo '✅ Killed backend processes'",
       "presentation": {
         "echo": true,
         "reveal": "always",
@@ -30,7 +30,7 @@
     {
       "type": "shell",
       "label": "Kill: All Dev Servers",
-      "command": "pkill -9 -f 'air|nx run|ng serve' && echo '✅ Killed all dev servers' || echo 'ℹ️  No dev servers running'",
+      "command": "pkill -9 -f 'air|nx run|ng serve|apps/api/tmp/main' || (lsof -ti :8088 :4200 | xargs -r kill -9) || echo 'ℹ️  No dev servers running' && echo '✅ Killed all dev servers'",
       "presentation": {
         "echo": true,
         "reveal": "always",
@@ -66,7 +66,10 @@
     {
       "type": "shell",
       "label": "Kill: Everything (Nuclear Option)",
-      "command": "pkill -9 -f 'air|nx|ng serve|golangci-lint' && echo '💥 Killed all Node/Go dev processes' || echo 'ℹ️  Nothing to kill'",
+      "command": "cd ${workspaceFolder}/workspace && pkill -9 -f 'air|nx|ng serve|golangci-lint|plugin-worker' 2>/dev/null; rm -rf .nx/cache .nx/daemon 2>/dev/null; npx nx reset 2>/dev/null; echo '💥 Killed all processes and cleared Nx cache' || echo 'ℹ️  Cleanup completed'",
+      "options": {
+        "cwd": "${workspaceFolder}/workspace"
+      },
       "presentation": {
         "echo": true,
         "reveal": "always",
@@ -381,7 +384,22 @@
     // ==========================================
     {
       "command": "npm run typecheck",
-      "label": "TypeCheck: Frontend",
+      "label": "TypeCheck: All",
+      "options": {
+        "cwd": "${workspaceFolder}/workspace"
+      },
+      "presentation": {
+        "echo": true,
+        "focus": false,
+        "panel": "shared",
+        "reveal": "always"
+      },
+      "problemMatcher": ["$tsc", "$go"],
+      "type": "shell"
+    },
+    {
+      "command": "npm run typecheck:web",
+      "label": "TypeCheck: Web (App)",
       "options": {
         "cwd": "${workspaceFolder}/workspace"
       },
@@ -394,12 +412,132 @@
       "problemMatcher": ["$tsc"],
       "type": "shell"
     },
+    {
+      "command": "npm run typecheck:web:spec",
+      "label": "TypeCheck: Web (Spec)",
+      "options": {
+        "cwd": "${workspaceFolder}/workspace"
+      },
+      "presentation": {
+        "echo": true,
+        "focus": false,
+        "panel": "shared",
+        "reveal": "always"
+      },
+      "problemMatcher": ["$tsc"],
+      "type": "shell"
+    },
+    {
+      "command": "npm run typecheck:web:all",
+      "label": "TypeCheck: Web (App + Spec)",
+      "options": {
+        "cwd": "${workspaceFolder}/workspace"
+      },
+      "presentation": {
+        "echo": true,
+        "focus": false,
+        "panel": "shared",
+        "reveal": "always"
+      },
+      "problemMatcher": ["$tsc"],
+      "type": "shell"
+    },
+    {
+      "command": "npm run typecheck:web:build",
+      "label": "TypeCheck: Web (Build - Angular Compiler)",
+      "options": {
+        "cwd": "${workspaceFolder}/workspace"
+      },
+      "presentation": {
+        "echo": true,
+        "focus": false,
+        "panel": "shared",
+        "reveal": "always"
+      },
+      "problemMatcher": ["$tsc"],
+      "type": "shell"
+    },
+    {
+      "command": "npm run typecheck:api",
+      "label": "TypeCheck: API (Vet)",
+      "options": {
+        "cwd": "${workspaceFolder}/workspace"
+      },
+      "presentation": {
+        "echo": true,
+        "focus": false,
+        "panel": "shared",
+        "reveal": "always"
+      },
+      "problemMatcher": ["$go"],
+      "type": "shell"
+    },
+    {
+      "command": "npm run typecheck:api:build",
+      "label": "TypeCheck: API (Build)",
+      "options": {
+        "cwd": "${workspaceFolder}/workspace"
+      },
+      "presentation": {
+        "echo": true,
+        "focus": false,
+        "panel": "shared",
+        "reveal": "always"
+      },
+      "problemMatcher": ["$go"],
+      "type": "shell"
+    },
+    {
+      "command": "npm run typecheck:api:test",
+      "label": "TypeCheck: API (Test)",
+      "options": {
+        "cwd": "${workspaceFolder}/workspace"
+      },
+      "presentation": {
+        "echo": true,
+        "focus": false,
+        "panel": "shared",
+        "reveal": "always"
+      },
+      "problemMatcher": ["$go"],
+      "type": "shell"
+    },
+    {
+      "command": "npm run typecheck:api:all",
+      "label": "TypeCheck: API (All)",
+      "options": {
+        "cwd": "${workspaceFolder}/workspace"
+      },
+      "presentation": {
+        "echo": true,
+        "focus": false,
+        "panel": "shared",
+        "reveal": "always"
+      },
+      "problemMatcher": ["$go"],
+      "type": "shell"
+    },
     // ==========================================
     // NX TASKS
     // ==========================================
     {
       "command": "npx nx graph",
       "label": "Nx: Show Graph",
+      "options": {
+        "cwd": "${workspaceFolder}/workspace"
+      },
+      "presentation": {
+        "echo": true,
+        "focus": false,
+        "panel": "shared",
+        "reveal": "always"
+      },
+      "problemMatcher": [],
+      "type": "shell"
+    },
+    {
+      "command": "cd ${workspaceFolder}/workspace && pkill -9 -f 'nx.*daemon|plugin-worker' 2>/dev/null; rm -rf .nx/cache .nx/daemon 2>/dev/null; npx nx reset",
+      "label": "Nx: Reset Cache & Daemon",
       "options": {
         "cwd": "${workspaceFolder}/workspace"
       },

@@ -34,6 +34,10 @@ yarn-error.log
 .nx/cache
 .nx/workspace-data
 
+# Angular
+.angular/
+*.tsbuildinfo
+
 # Go
 apps/api/tmp/
 apps/api/bin/
@@ -70,4 +74,3 @@ coverage/
 *.swp
 *.swo
 *~
-

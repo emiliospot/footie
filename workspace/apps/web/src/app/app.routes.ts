@@ -45,7 +45,8 @@ export const routes: Routes = [
       import("./features/rankings/rankings.routes").then(
         (m) => m.RANKINGS_ROUTES,
       ),
-    canActivate: [authGuard],
+    // TODO: Re-enable auth guard when auth endpoints are implemented
+    // canActivate: [authGuard],
   },
   {
     path: "admin",

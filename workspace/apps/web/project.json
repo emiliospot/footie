@@ -104,6 +104,36 @@
         "command": "tsc --noEmit -p apps/web/tsconfig.app.json",
         "cwd": "{workspaceRoot}"
       }
+    },
+    "typecheck-build": {
+      "executor": "@angular-devkit/build-angular:application",
+      "options": {
+        "assets": ["apps/web/src/assets"],
+        "browser": "apps/web/src/main.ts",
+        "extractLicenses": false,
+        "index": "apps/web/src/index.html",
+        "optimization": false,
+        "outputPath": "dist/web",
+        "polyfills": ["zone.js"],
+        "scripts": [],
+        "sourceMap": true,
+        "styles": ["apps/web/src/styles.scss"],
+        "tsConfig": "apps/web/tsconfig.app.json"
+      }
+    },
+    "typecheck:all": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "tsc --noEmit -p apps/web/tsconfig.app.json && tsc --noEmit -p apps/web/tsconfig.spec.json",
+        "cwd": "{workspaceRoot}"
+      }
+    },
+    "typecheck:spec": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "tsc --noEmit -p apps/web/tsconfig.spec.json",
+        "cwd": "{workspaceRoot}"
+      }
     }
   }
 }

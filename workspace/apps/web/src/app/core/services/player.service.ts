@@ -1,17 +1,16 @@
-import { Injectable } from "@angular/core";
 import { HttpClient, HttpParams } from "@angular/common/http";
-import { Observable } from "rxjs";
+import { Injectable, inject } from "@angular/core";
 import { environment } from "@environments/environment";
-import { Player, PlayerStatistics } from "../models/player.model";
+import { Observable } from "rxjs";
 import { PaginatedResponse } from "../models/api-response.model";
+import { Player, PlayerStatistics } from "../models/player.model";
 
 @Injectable({
   providedIn: "root",
 })
 export class PlayerService {
   private readonly apiUrl = `${environment.apiUrl}/players`;
-
-  constructor(private readonly http: HttpClient) {}
+  private readonly http = inject(HttpClient);
 
   public getPlayers(
     page: number = 1,

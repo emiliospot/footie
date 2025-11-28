@@ -1,21 +1,16 @@
 import { CommonModule } from "@angular/common";
-import { Component, OnInit } from "@angular/core";
-import { FormsModule } from "@angular/forms";
+import { Component, OnInit, inject } from "@angular/core";
 import { RankingsResponse } from "@core/models/rankings.model";
 import { RankingsService } from "@core/services/rankings.service";
 
 @Component({
   selector: "app-competition-rankings",
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule],
   templateUrl: "./competition-rankings.component.html",
   styleUrl: "./competition-rankings.component.scss",
 })
 export class CompetitionRankingsComponent implements OnInit {
-  // Filter options
-  public selectedChampionship = "Cyprus U19 League Division 1";
-  public selectedSeason = "2025/2026";
-
   // Tab states
   public rankingType: "team" | "player" = "team";
   public selectedCategory = "attacking";
@@ -34,7 +29,7 @@ export class CompetitionRankingsComponent implements OnInit {
     { value: "insights", label: "Insights" },
   ];
 
-  constructor(private readonly rankingsService: RankingsService) {}
+  private readonly rankingsService = inject(RankingsService);
 
   public ngOnInit(): void {
     this.loadRankings();
@@ -51,25 +46,12 @@ export class CompetitionRankingsComponent implements OnInit {
     this.loadRankings();
   }
 
-  public onChampionshipChange(): void {
-    this.loadRankings();
-  }
-
-  public onSeasonChange(): void {
-    this.loadRankings();
-  }
-
   public loadRankings(): void {
     this.loading = true;
     this.error = null;
 
     this.rankingsService
-      .getCompetitionRankings(
-        this.rankingType,
-        this.selectedCategory,
-        this.selectedChampionship,
-        this.selectedSeason,
-      )
+      .getCompetitionRankings(this.rankingType, this.selectedCategory)
       .subscribe({
         next: (data) => {
           this.rankingsData = data;
@@ -86,7 +68,7 @@ export class CompetitionRankingsComponent implements OnInit {
   public getInitials(playerName: string): string {
     const parts = playerName.split(" ");
     if (parts.length >= 2) {
-      return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+      return (parts[0][0] + parts.at(-1)?.[0]).toUpperCase();
     }
     return playerName.substring(0, 2).toUpperCase();
   }
@@ -96,15 +78,24 @@ export class CompetitionRankingsComponent implements OnInit {
     return colors[index % colors.length];
   }
 
-  public trackByCategory(_index: number, category: { value: string; label: string }): string {
+  public trackByCategory(
+    _index: number,
+    category: { value: string; label: string },
+  ): string {
     return category.value;
   }
 
-  public trackByRankingEntry(_index: number, entry: { rank: number; name: string }): number {
+  public trackByRankingEntry(
+    _index: number,
+    entry: { rank: number; name: string },
+  ): number {
     return entry.rank;
   }
 
-  public trackByCategoryCard(_index: number, category: { title: string }): string {
+  public trackByCategoryCard(
+    _index: number,
+    category: { title: string },
+  ): string {
     return category.title;
   }
 }

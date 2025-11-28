@@ -11,7 +11,7 @@ help: ## Show this help
 install: ## Install dependencies
 	go mod download
 	go mod verify
-	go install github.com/cosmtrek/air@latest
+	go install github.com/air-verse/air@latest
 	go install github.com/swaggo/swag/cmd/swag@latest
 	go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
 	go install github.com/sqlc-dev/sqlc/cmd/sqlc@latest

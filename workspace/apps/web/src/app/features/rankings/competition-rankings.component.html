@@ -1,50 +1,46 @@
 <div class="competition-rankings">
-  <!-- Header -->
-  <div class="header">
-    <div class="title-section">
-      <h1>
-        <span class="trophy-icon">🏆</span>
-        Competition Rankings
-      </h1>
-      <p class="subtitle">
-        {{
-          rankingType === 'team'
-            ? 'Team rankings across different performance categories.'
-            : 'Player rankings across different performance categories.'
-        }}
-      </p>
-    </div>
-  </div>
-
-  <!-- Filters -->
-  <div class="filters">
-    <div class="filter-group">
-      <label for="championship">Select Championship</label>
-      <select
-        id="championship"
-        [(ngModel)]="selectedChampionship"
-        (change)="onChampionshipChange()"
-        class="filter-select"
-      >
-        <option value="Cyprus U19 League Division 1">Cyprus U19 League Division 1</option>
-      </select>
-    </div>
-    <div class="filter-group">
-      <label for="season">Select Season</label>
-      <select id="season" [(ngModel)]="selectedSeason" (change)="onSeasonChange()" class="filter-select">
-        <option value="2025/2026">2025/2026</option>
-      </select>
-    </div>
-  </div>
-
   <!-- Main Content Card -->
   <div class="rankings-card">
+    <!-- Header -->
+    <div class="header">
+      <div class="title-section">
+        <h1>
+          <svg
+            class="trophy-icon"
+            viewBox="0 0 24 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M19 5H17V3H7V5H5C3.9 5 3 5.9 3 7V8C3 10.55 4.92 12.63 7.39 12.94C8.02 14.44 9.37 15.57 11 15.9V19H7V21H17V19H13V15.9C14.63 15.57 15.98 14.44 16.61 12.94C19.08 12.63 21 10.55 21 8V7C21 5.9 20.1 5 19 5ZM5 8V7H7V10.82C5.84 10.4 5 9.3 5 8ZM19 8C19 9.3 18.16 10.4 17 10.82V7H19V8Z"
+              fill="#212121"
+            />
+          </svg>
+          Competition Rankings
+        </h1>
+        <p class="subtitle">
+          {{
+            rankingType === "team"
+              ? "Team rankings across different performance categories"
+              : "Player rankings across different performance categories"
+          }}
+        </p>
+      </div>
+    </div>
     <!-- Main Tabs: Team Rankings / Player Rankings -->
     <div class="main-tabs">
-      <button class="tab-button" [class.active]="rankingType === 'team'" (click)="onRankingTypeChange('team')">
+      <button
+        class="tab-button"
+        [class.active]="rankingType === 'team'"
+        (click)="onRankingTypeChange('team')"
+      >
         Team Rankings
       </button>
-      <button class="tab-button" [class.active]="rankingType === 'player'" (click)="onRankingTypeChange('player')">
+      <button
+        class="tab-button"
+        [class.active]="rankingType === 'player'"
+        (click)="onRankingTypeChange('player')"
+      >
         Player Rankings
       </button>
     </div>
@@ -73,13 +69,25 @@
 
     <!-- Rankings Content -->
     <div *ngIf="rankingsData && !loading && !error" class="rankings-content">
-      <div *ngFor="let category of rankingsData.categories; trackBy: trackByCategoryCard" class="ranking-category-card">
+      <div
+        *ngFor="
+          let category of rankingsData.categories;
+          trackBy: trackByCategoryCard
+        "
+        class="ranking-category-card"
+      >
         <h3 class="category-title">
           {{ category.title }}
-          <span class="unit">{{ category.unit }}</span>
+          <span class="unit">({{ category.unit }})</span>
         </h3>
         <div class="ranking-list">
-          <div *ngFor="let entry of category.rankings; trackBy: trackByRankingEntry" class="ranking-entry">
+          <div
+            *ngFor="
+              let entry of category.rankings;
+              trackBy: trackByRankingEntry
+            "
+            class="ranking-entry"
+          >
             <div class="rank-number">{{ entry.rank }}</div>
             <div class="entry-info">
               <!-- Team Rankings -->
@@ -93,7 +101,10 @@
               <div *ngIf="rankingType === 'player'" class="player-entry">
                 <div
                   class="player-avatar"
-                  [style.background-color]="entry.avatarColor || getAvatarColor(entry.name, entry.rank - 1)"
+                  [style.background-color]="
+                    entry.avatarColor ||
+                    getAvatarColor(entry.name, entry.rank - 1)
+                  "
                 >
                   {{ entry.initials || getInitials(entry.name) }}
                 </div>

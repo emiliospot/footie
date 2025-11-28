@@ -44,7 +44,7 @@
     "serve": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "cd apps/api && $HOME/go/bin/air",
+        "command": "cd apps/api && $HOME/go/bin/air -c .air.toml",
         "cwd": "."
       }
     },
@@ -63,6 +63,34 @@
         "cwd": "."
       },
       "outputs": ["{workspaceRoot}/coverage/api"]
+    },
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "cd apps/api && go vet ./...",
+        "cwd": "."
+      }
+    },
+    "typecheck:all": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "cd apps/api && go vet ./... && go build ./... && go test -c ./...",
+        "cwd": "."
+      }
+    },
+    "typecheck:build": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "cd apps/api && go build ./...",
+        "cwd": "."
+      }
+    },
+    "typecheck:test": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "cd apps/api && go test -c ./...",
+        "cwd": "."
+      }
     }
   }
 }

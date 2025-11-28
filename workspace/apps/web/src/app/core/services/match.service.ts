@@ -1,17 +1,16 @@
-import { Injectable } from "@angular/core";
 import { HttpClient, HttpParams } from "@angular/common/http";
-import { Observable } from "rxjs";
+import { Injectable, inject } from "@angular/core";
 import { environment } from "@environments/environment";
-import { Match, MatchEvent } from "../models/match.model";
+import { Observable } from "rxjs";
 import { PaginatedResponse } from "../models/api-response.model";
+import { Match, MatchEvent } from "../models/match.model";
 
 @Injectable({
   providedIn: "root",
 })
 export class MatchService {
   private readonly apiUrl = `${environment.apiUrl}/matches`;
-
-  constructor(private readonly http: HttpClient) {}
+  private readonly http = inject(HttpClient);
 
   public getMatches(
     page: number = 1,

@@ -95,7 +95,7 @@ func TestUserRepository_FindByID(t *testing.T) {
 
 	tests := []struct {
 		name    string
-		id      uint
+		id      int32
 		wantErr bool
 	}{
 		{

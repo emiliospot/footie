@@ -23,7 +23,7 @@ func (r *GormUserRepository) Create(ctx context.Context, user *models.User) erro
 	return r.db.WithContext(ctx).Create(user).Error
 }
 
-func (r *GormUserRepository) FindByID(ctx context.Context, id uint) (*models.User, error) {
+func (r *GormUserRepository) FindByID(ctx context.Context, id int32) (*models.User, error) {
 	var user models.User
 	err := r.db.WithContext(ctx).First(&user, id).Error
 	if err != nil {
@@ -45,7 +45,7 @@ func (r *GormUserRepository) Update(ctx context.Context, user *models.User) erro
 	return r.db.WithContext(ctx).Save(user).Error
 }
 
-func (r *GormUserRepository) Delete(ctx context.Context, id uint) error {
+func (r *GormUserRepository) Delete(ctx context.Context, id int32) error {
 	return r.db.WithContext(ctx).Delete(&models.User{}, id).Error
 }
 
