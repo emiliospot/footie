@@ -1,1 +1,9 @@
 /* You can add global styles to this file, and also import other style files */
+
+/* Angular Material Theme */
+@import '@angular/material/prebuilt-themes/indigo-pink.css';
+
+/* Prevent layout shift from scrollbar appearing/disappearing in Chrome */
+html {
+  scrollbar-gutter: stable;
+}

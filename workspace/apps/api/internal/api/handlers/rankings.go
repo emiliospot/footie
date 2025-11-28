@@ -257,9 +257,33 @@ func (h *RankingsHandler) getPlayerRankings(category string) []RankingCategory {
 		"Nikos Petrou":             "#F44336",
 	}
 
+	// Team logo mapping
+	teamLogos := map[string]string{
+		"AEK U19":              "/assets/teams/aek.png",
+		"Anorthosis U19":       "/assets/teams/anorthosis.png",
+		"APOEL U19":            "/assets/teams/apoel.png",
+		"Pafos U19":           "/assets/teams/pafos.png",
+		"Olympiakos U19":      "/assets/teams/olympiakos.png",
+		"AEL U19":             "/assets/teams/ael.png",
+		"Karmiotissa U19":     "/assets/teams/karmiotissa.png",
+		"Aris U19":            "/assets/teams/aris.png",
+		"Nea Salamina U19":    "/assets/teams/nea-salamina.png",
+		"Ayia Napa U19":       "/assets/teams/ayia-napa.png",
+		"Omonoia FC U19":      "/assets/teams/omonoia.png",
+		"Omonoia 29M U19":     "/assets/teams/omonoia.png",
+	}
+
 	// Helper to get player color
 	getColor := func(name string) string {
 		return playerColors[name]
+	}
+
+	// Helper to get team logo
+	getTeamLogo := func(team string) *string {
+		if logo, ok := teamLogos[team]; ok {
+			return stringPtr(logo)
+		}
+		return nil
 	}
 
 	switch category {
@@ -269,66 +293,66 @@ func (h *RankingsHandler) getPlayerRankings(category string) []RankingCategory {
 				Title: "xG - Expected Goals",
 				Unit:  "/90'",
 				Rankings: []RankingEntry{
-					{Rank: 1, Name: "Petros Ioannou", Team: "AEK U19", Value: 0.78, Initials: stringPtr("PI"), AvatarColor: stringPtr(getColor("Petros Ioannou"))},
-					{Rank: 2, Name: "Artemis Spanos", Team: "Karmiotissa U19", Value: 0.72, Initials: stringPtr("AS"), AvatarColor: stringPtr(getColor("Artemis Spanos"))},
-					{Rank: 3, Name: "Kyriakos Epifaniou", Team: "Nea Salamina U19", Value: 0.72, Initials: stringPtr("KE"), AvatarColor: stringPtr(getColor("Kyriakos Epifaniou"))},
-					{Rank: 4, Name: "Antonis Kosionou", Team: "Ayia Napa U19", Value: 0.69, Initials: stringPtr("AK"), AvatarColor: stringPtr(getColor("Antonis Kosionou"))},
-					{Rank: 5, Name: "Marinos Petrou", Team: "Anorthosis U19", Value: 0.62, Initials: stringPtr("MP"), AvatarColor: stringPtr(getColor("Marinos Petrou"))},
+					{Rank: 1, Name: "Petros Ioannou", Team: "AEK U19", Value: 0.78, Logo: getTeamLogo("AEK U19"), Initials: stringPtr("PI"), AvatarColor: stringPtr(getColor("Petros Ioannou"))},
+					{Rank: 2, Name: "Artemis Spanos", Team: "Karmiotissa U19", Value: 0.72, Logo: getTeamLogo("Karmiotissa U19"), Initials: stringPtr("AS"), AvatarColor: stringPtr(getColor("Artemis Spanos"))},
+					{Rank: 3, Name: "Kyriakos Epifaniou", Team: "Nea Salamina U19", Value: 0.72, Logo: getTeamLogo("Nea Salamina U19"), Initials: stringPtr("KE"), AvatarColor: stringPtr(getColor("Kyriakos Epifaniou"))},
+					{Rank: 4, Name: "Antonis Kosionou", Team: "Ayia Napa U19", Value: 0.69, Logo: getTeamLogo("Ayia Napa U19"), Initials: stringPtr("AK"), AvatarColor: stringPtr(getColor("Antonis Kosionou"))},
+					{Rank: 5, Name: "Marinos Petrou", Team: "Anorthosis U19", Value: 0.62, Logo: getTeamLogo("Anorthosis U19"), Initials: stringPtr("MP"), AvatarColor: stringPtr(getColor("Marinos Petrou"))},
 				},
 			},
 			{
 				Title: "Shots",
 				Unit:  "/90'",
 				Rankings: []RankingEntry{
-					{Rank: 1, Name: "Konstantinos Poursaitidis", Team: "APOEL U19", Value: 5.0, Initials: stringPtr("KP"), AvatarColor: stringPtr(getColor("Konstantinos Poursaitidis"))},
-					{Rank: 2, Name: "Christos Loukaidis", Team: "AEK U19", Value: 5.0, Initials: stringPtr("CL"), AvatarColor: stringPtr(getColor("Christos Loukaidis"))},
-					{Rank: 3, Name: "Marinos Petrou", Team: "Anorthosis U19", Value: 4.38, Initials: stringPtr("MP"), AvatarColor: stringPtr(getColor("Marinos Petrou"))},
-					{Rank: 4, Name: "Dimitris Ioannou", Team: "APOEL U19", Value: 4.0, Initials: stringPtr("DI"), AvatarColor: stringPtr(getColor("Dimitris Ioannou"))},
-					{Rank: 5, Name: "Simonas Christofi", Team: "AEL U19", Value: 3.67, Initials: stringPtr("SC"), AvatarColor: stringPtr(getColor("Simonas Christofi"))},
+					{Rank: 1, Name: "Konstantinos Poursaitidis", Team: "APOEL U19", Value: 5.0, Logo: getTeamLogo("APOEL U19"), Initials: stringPtr("KP"), AvatarColor: stringPtr(getColor("Konstantinos Poursaitidis"))},
+					{Rank: 2, Name: "Christos Loukaidis", Team: "AEK U19", Value: 5.0, Logo: getTeamLogo("AEK U19"), Initials: stringPtr("CL"), AvatarColor: stringPtr(getColor("Christos Loukaidis"))},
+					{Rank: 3, Name: "Marinos Petrou", Team: "Anorthosis U19", Value: 4.38, Logo: getTeamLogo("Anorthosis U19"), Initials: stringPtr("MP"), AvatarColor: stringPtr(getColor("Marinos Petrou"))},
+					{Rank: 4, Name: "Dimitris Ioannou", Team: "APOEL U19", Value: 4.0, Logo: getTeamLogo("APOEL U19"), Initials: stringPtr("DI"), AvatarColor: stringPtr(getColor("Dimitris Ioannou"))},
+					{Rank: 5, Name: "Simonas Christofi", Team: "AEL U19", Value: 3.67, Logo: getTeamLogo("AEL U19"), Initials: stringPtr("SC"), AvatarColor: stringPtr(getColor("Simonas Christofi"))},
 				},
 			},
 			{
 				Title: "Crosses",
 				Unit:  "/90'",
 				Rankings: []RankingEntry{
-					{Rank: 1, Name: "Konstantinos Poursaitidis", Team: "APOEL U19", Value: 6.0, Initials: stringPtr("KP"), AvatarColor: stringPtr(getColor("Konstantinos Poursaitidis"))},
-					{Rank: 2, Name: "Sotiris Panagi", Team: "Anorthosis U19", Value: 6.0, Initials: stringPtr("SP"), AvatarColor: stringPtr(getColor("Sotiris Panagi"))},
-					{Rank: 3, Name: "Glaukos Chatzimitsis", Team: "Pafos U19", Value: 5.0, Initials: stringPtr("GC"), AvatarColor: stringPtr(getColor("Glaukos Chatzimitsis"))},
-					{Rank: 4, Name: "Panagiotis Tsivikos", Team: "Pafos U19", Value: 4.50, Initials: stringPtr("PT"), AvatarColor: stringPtr(getColor("Panagiotis Tsivikos"))},
-					{Rank: 5, Name: "Sotiris Panaghi", Team: "Anorthosis U19", Value: 4.0, Initials: stringPtr("SP"), AvatarColor: stringPtr(getColor("Sotiris Panaghi"))},
+					{Rank: 1, Name: "Konstantinos Poursaitidis", Team: "APOEL U19", Value: 6.0, Logo: getTeamLogo("APOEL U19"), Initials: stringPtr("KP"), AvatarColor: stringPtr(getColor("Konstantinos Poursaitidis"))},
+					{Rank: 2, Name: "Sotiris Panagi", Team: "Anorthosis U19", Value: 6.0, Logo: getTeamLogo("Anorthosis U19"), Initials: stringPtr("SP"), AvatarColor: stringPtr(getColor("Sotiris Panagi"))},
+					{Rank: 3, Name: "Glaukos Chatzimitsis", Team: "Pafos U19", Value: 5.0, Logo: getTeamLogo("Pafos U19"), Initials: stringPtr("GC"), AvatarColor: stringPtr(getColor("Glaukos Chatzimitsis"))},
+					{Rank: 4, Name: "Panagiotis Tsivikos", Team: "Pafos U19", Value: 4.50, Logo: getTeamLogo("Pafos U19"), Initials: stringPtr("PT"), AvatarColor: stringPtr(getColor("Panagiotis Tsivikos"))},
+					{Rank: 5, Name: "Sotiris Panaghi", Team: "Anorthosis U19", Value: 4.0, Logo: getTeamLogo("Anorthosis U19"), Initials: stringPtr("SP"), AvatarColor: stringPtr(getColor("Sotiris Panaghi"))},
 				},
 			},
 			{
 				Title: "1v1 Dribbles",
 				Unit:  "/90'",
 				Rankings: []RankingEntry{
-					{Rank: 1, Name: "Alexandros Efstathiou", Team: "AEL U19", Value: 7.17, Initials: stringPtr("AE"), AvatarColor: stringPtr(getColor("Alexandros Efstathiou"))},
-					{Rank: 2, Name: "Giorgos Lamprou", Team: "Karmiotissa U19", Value: 7.0, Initials: stringPtr("GL"), AvatarColor: stringPtr(getColor("Giorgos Lamprou"))},
-					{Rank: 3, Name: "Ioannis Efraimidis", Team: "Aris U19", Value: 6.0, Initials: stringPtr("IE"), AvatarColor: stringPtr(getColor("Ioannis Efraimidis"))},
-					{Rank: 4, Name: "Marinos Petrou", Team: "Anorthosis U19", Value: 5.83, Initials: stringPtr("MP"), AvatarColor: stringPtr(getColor("Marinos Petrou"))},
-					{Rank: 5, Name: "Kyriakos Epifanou", Team: "Nea Salamina U19", Value: 5.5, Initials: stringPtr("KE"), AvatarColor: stringPtr(getColor("Kyriakos Epifanou"))},
+					{Rank: 1, Name: "Alexandros Efstathiou", Team: "AEL U19", Value: 7.17, Logo: getTeamLogo("AEL U19"), Initials: stringPtr("AE"), AvatarColor: stringPtr(getColor("Alexandros Efstathiou"))},
+					{Rank: 2, Name: "Giorgos Lamprou", Team: "Karmiotissa U19", Value: 7.0, Logo: getTeamLogo("Karmiotissa U19"), Initials: stringPtr("GL"), AvatarColor: stringPtr(getColor("Giorgos Lamprou"))},
+					{Rank: 3, Name: "Ioannis Efraimidis", Team: "Aris U19", Value: 6.0, Logo: getTeamLogo("Aris U19"), Initials: stringPtr("IE"), AvatarColor: stringPtr(getColor("Ioannis Efraimidis"))},
+					{Rank: 4, Name: "Marinos Petrou", Team: "Anorthosis U19", Value: 5.83, Logo: getTeamLogo("Anorthosis U19"), Initials: stringPtr("MP"), AvatarColor: stringPtr(getColor("Marinos Petrou"))},
+					{Rank: 5, Name: "Kyriakos Epifanou", Team: "Nea Salamina U19", Value: 5.5, Logo: getTeamLogo("Nea Salamina U19"), Initials: stringPtr("KE"), AvatarColor: stringPtr(getColor("Kyriakos Epifanou"))},
 				},
 			},
 			{
 				Title: "Ball Carries",
 				Unit:  "/90'",
 				Rankings: []RankingEntry{
-					{Rank: 1, Name: "Panagiotis Siderenios", Team: "Pafos U19", Value: 30.0, Initials: stringPtr("PS"), AvatarColor: stringPtr(getColor("Panagiotis Siderenios"))},
-					{Rank: 2, Name: "Kosmas Ioannou", Team: "Pafos U19", Value: 26.33, Initials: stringPtr("KI"), AvatarColor: stringPtr(getColor("Kosmas Ioannou"))},
-					{Rank: 3, Name: "Kosmas Ioannou", Team: "Pafos U19", Value: 25.25, Initials: stringPtr("KI"), AvatarColor: stringPtr(getColor("Kosmas Ioannou"))},
-					{Rank: 4, Name: "Kyriakos Strouthou", Team: "AEK U19", Value: 23.50, Initials: stringPtr("KS"), AvatarColor: stringPtr(getColor("Kyriakos Strouthou"))},
-					{Rank: 5, Name: "Frixos Michailidis", Team: "Olympiakos U19", Value: 22.0, Initials: stringPtr("FM"), AvatarColor: stringPtr(getColor("Frixos Michailidis"))},
+					{Rank: 1, Name: "Panagiotis Siderenios", Team: "Pafos U19", Value: 30.0, Logo: getTeamLogo("Pafos U19"), Initials: stringPtr("PS"), AvatarColor: stringPtr(getColor("Panagiotis Siderenios"))},
+					{Rank: 2, Name: "Kosmas Ioannou", Team: "Pafos U19", Value: 26.33, Logo: getTeamLogo("Pafos U19"), Initials: stringPtr("KI"), AvatarColor: stringPtr(getColor("Kosmas Ioannou"))},
+					{Rank: 3, Name: "Kosmas Ioannou", Team: "Pafos U19", Value: 25.25, Logo: getTeamLogo("Pafos U19"), Initials: stringPtr("KI"), AvatarColor: stringPtr(getColor("Kosmas Ioannou"))},
+					{Rank: 4, Name: "Kyriakos Strouthou", Team: "AEK U19", Value: 23.50, Logo: getTeamLogo("AEK U19"), Initials: stringPtr("KS"), AvatarColor: stringPtr(getColor("Kyriakos Strouthou"))},
+					{Rank: 5, Name: "Frixos Michailidis", Team: "Olympiakos U19", Value: 22.0, Logo: getTeamLogo("Olympiakos U19"), Initials: stringPtr("FM"), AvatarColor: stringPtr(getColor("Frixos Michailidis"))},
 				},
 			},
 			{
 				Title: "Box Penetrations",
 				Unit:  "/90'",
 				Rankings: []RankingEntry{
-					{Rank: 1, Name: "Christos Loukaidis", Team: "AEK U19", Value: 5.33, Initials: stringPtr("CL"), AvatarColor: stringPtr(getColor("Christos Loukaidis"))},
-					{Rank: 2, Name: "Orestis Hatzivassiliou", Team: "Omonoia 29M U19", Value: 5.0, Initials: stringPtr("OH"), AvatarColor: stringPtr(getColor("Orestis Hatzivassiliou"))},
-					{Rank: 3, Name: "Petros Ioannou", Team: "AEK U19", Value: 4.25, Initials: stringPtr("PI"), AvatarColor: stringPtr(getColor("Petros Ioannou"))},
-					{Rank: 4, Name: "Andreas Avraam", Team: "Anorthosis U19", Value: 4.25, Initials: stringPtr("AA"), AvatarColor: stringPtr(getColor("Andreas Avraam"))},
-					{Rank: 5, Name: "Curtis Junior Makosso", Team: "Pafos U19", Value: 4.0, Initials: stringPtr("CJ"), AvatarColor: stringPtr(getColor("Curtis Junior Makosso"))},
+					{Rank: 1, Name: "Christos Loukaidis", Team: "AEK U19", Value: 5.33, Logo: getTeamLogo("AEK U19"), Initials: stringPtr("CL"), AvatarColor: stringPtr(getColor("Christos Loukaidis"))},
+					{Rank: 2, Name: "Orestis Hatzivassiliou", Team: "Omonoia 29M U19", Value: 5.0, Logo: getTeamLogo("Omonoia 29M U19"), Initials: stringPtr("OH"), AvatarColor: stringPtr(getColor("Orestis Hatzivassiliou"))},
+					{Rank: 3, Name: "Petros Ioannou", Team: "AEK U19", Value: 4.25, Logo: getTeamLogo("AEK U19"), Initials: stringPtr("PI"), AvatarColor: stringPtr(getColor("Petros Ioannou"))},
+					{Rank: 4, Name: "Andreas Avraam", Team: "Anorthosis U19", Value: 4.25, Logo: getTeamLogo("Anorthosis U19"), Initials: stringPtr("AA"), AvatarColor: stringPtr(getColor("Andreas Avraam"))},
+					{Rank: 5, Name: "Curtis Junior Makosso", Team: "Pafos U19", Value: 4.0, Logo: getTeamLogo("Pafos U19"), Initials: stringPtr("CJ"), AvatarColor: stringPtr(getColor("Curtis Junior Makosso"))},
 				},
 			},
 		}
@@ -338,11 +362,11 @@ func (h *RankingsHandler) getPlayerRankings(category string) []RankingCategory {
 				Title: "Tackles Won",
 				Unit:  "/90'",
 				Rankings: []RankingEntry{
-					{Rank: 1, Name: "Dimitris Petrou", Team: "APOEL U19", Value: 4.2, Initials: stringPtr("DP"), AvatarColor: stringPtr(getColor("Dimitris Petrou"))},
-					{Rank: 2, Name: "Andreas Georgiou", Team: "Anorthosis U19", Value: 3.9, Initials: stringPtr("AG"), AvatarColor: stringPtr(getColor("Andreas Georgiou"))},
-					{Rank: 3, Name: "Michalis Ioannou", Team: "AEK U19", Value: 3.7, Initials: stringPtr("MI"), AvatarColor: stringPtr(getColor("Michalis Ioannou"))},
-					{Rank: 4, Name: "Petros Christou", Team: "Pafos U19", Value: 3.5, Initials: stringPtr("PC"), AvatarColor: stringPtr(getColor("Petros Christou"))},
-					{Rank: 5, Name: "Georgios Panayi", Team: "Olympiakos U19", Value: 3.3, Initials: stringPtr("GP"), AvatarColor: stringPtr(getColor("Georgios Panayi"))},
+					{Rank: 1, Name: "Dimitris Petrou", Team: "APOEL U19", Value: 4.2, Logo: getTeamLogo("APOEL U19"), Initials: stringPtr("DP"), AvatarColor: stringPtr(getColor("Dimitris Petrou"))},
+					{Rank: 2, Name: "Andreas Georgiou", Team: "Anorthosis U19", Value: 3.9, Logo: getTeamLogo("Anorthosis U19"), Initials: stringPtr("AG"), AvatarColor: stringPtr(getColor("Andreas Georgiou"))},
+					{Rank: 3, Name: "Michalis Ioannou", Team: "AEK U19", Value: 3.7, Logo: getTeamLogo("AEK U19"), Initials: stringPtr("MI"), AvatarColor: stringPtr(getColor("Michalis Ioannou"))},
+					{Rank: 4, Name: "Petros Christou", Team: "Pafos U19", Value: 3.5, Logo: getTeamLogo("Pafos U19"), Initials: stringPtr("PC"), AvatarColor: stringPtr(getColor("Petros Christou"))},
+					{Rank: 5, Name: "Georgios Panayi", Team: "Olympiakos U19", Value: 3.3, Logo: getTeamLogo("Olympiakos U19"), Initials: stringPtr("GP"), AvatarColor: stringPtr(getColor("Georgios Panayi"))},
 				},
 			},
 		}
@@ -352,11 +376,11 @@ func (h *RankingsHandler) getPlayerRankings(category string) []RankingCategory {
 				Title: "Passes Completed",
 				Unit:  "/90'",
 				Rankings: []RankingEntry{
-					{Rank: 1, Name: "Panagiotis Siderenios", Team: "Pafos U19", Value: 65.2, Initials: stringPtr("PS"), AvatarColor: stringPtr(getColor("Panagiotis Siderenios"))},
-					{Rank: 2, Name: "Kosmas Ioannou", Team: "Pafos U19", Value: 62.8, Initials: stringPtr("KI"), AvatarColor: stringPtr(getColor("Kosmas Ioannou"))},
-					{Rank: 3, Name: "Kyriakos Strouthou", Team: "AEK U19", Value: 58.5, Initials: stringPtr("KS"), AvatarColor: stringPtr(getColor("Kyriakos Strouthou"))},
-					{Rank: 4, Name: "Frixos Michailidis", Team: "Olympiakos U19", Value: 55.3, Initials: stringPtr("FM"), AvatarColor: stringPtr(getColor("Frixos Michailidis"))},
-					{Rank: 5, Name: "Andreas Avraam", Team: "Anorthosis U19", Value: 52.1, Initials: stringPtr("AA"), AvatarColor: stringPtr(getColor("Andreas Avraam"))},
+					{Rank: 1, Name: "Panagiotis Siderenios", Team: "Pafos U19", Value: 65.2, Logo: getTeamLogo("Pafos U19"), Initials: stringPtr("PS"), AvatarColor: stringPtr(getColor("Panagiotis Siderenios"))},
+					{Rank: 2, Name: "Kosmas Ioannou", Team: "Pafos U19", Value: 62.8, Logo: getTeamLogo("Pafos U19"), Initials: stringPtr("KI"), AvatarColor: stringPtr(getColor("Kosmas Ioannou"))},
+					{Rank: 3, Name: "Kyriakos Strouthou", Team: "AEK U19", Value: 58.5, Logo: getTeamLogo("AEK U19"), Initials: stringPtr("KS"), AvatarColor: stringPtr(getColor("Kyriakos Strouthou"))},
+					{Rank: 4, Name: "Frixos Michailidis", Team: "Olympiakos U19", Value: 55.3, Logo: getTeamLogo("Olympiakos U19"), Initials: stringPtr("FM"), AvatarColor: stringPtr(getColor("Frixos Michailidis"))},
+					{Rank: 5, Name: "Andreas Avraam", Team: "Anorthosis U19", Value: 52.1, Logo: getTeamLogo("Anorthosis U19"), Initials: stringPtr("AA"), AvatarColor: stringPtr(getColor("Andreas Avraam"))},
 				},
 			},
 		}
@@ -366,11 +390,11 @@ func (h *RankingsHandler) getPlayerRankings(category string) []RankingCategory {
 				Title: "Saves",
 				Unit:  "/90'",
 				Rankings: []RankingEntry{
-					{Rank: 1, Name: "Nikos Petrou", Team: "AEL U19", Value: 4.8, Initials: stringPtr("NP"), AvatarColor: stringPtr(getColor("Nikos Petrou"))},
-					{Rank: 2, Name: "Andreas Georgiou", Team: "Karmiotissa U19", Value: 4.5, Initials: stringPtr("AG"), AvatarColor: stringPtr(getColor("Andreas Georgiou"))},
-					{Rank: 3, Name: "Michalis Ioannou", Team: "Aris U19", Value: 4.2, Initials: stringPtr("MI"), AvatarColor: stringPtr(getColor("Michalis Ioannou"))},
-					{Rank: 4, Name: "Petros Christou", Team: "Nea Salamina U19", Value: 4.0, Initials: stringPtr("PC"), AvatarColor: stringPtr(getColor("Petros Christou"))},
-					{Rank: 5, Name: "Georgios Panayi", Team: "Ayia Napa U19", Value: 3.8, Initials: stringPtr("GP"), AvatarColor: stringPtr(getColor("Georgios Panayi"))},
+					{Rank: 1, Name: "Nikos Petrou", Team: "AEL U19", Value: 4.8, Logo: getTeamLogo("AEL U19"), Initials: stringPtr("NP"), AvatarColor: stringPtr(getColor("Nikos Petrou"))},
+					{Rank: 2, Name: "Andreas Georgiou", Team: "Karmiotissa U19", Value: 4.5, Logo: getTeamLogo("Karmiotissa U19"), Initials: stringPtr("AG"), AvatarColor: stringPtr(getColor("Andreas Georgiou"))},
+					{Rank: 3, Name: "Michalis Ioannou", Team: "Aris U19", Value: 4.2, Logo: getTeamLogo("Aris U19"), Initials: stringPtr("MI"), AvatarColor: stringPtr(getColor("Michalis Ioannou"))},
+					{Rank: 4, Name: "Petros Christou", Team: "Nea Salamina U19", Value: 4.0, Logo: getTeamLogo("Nea Salamina U19"), Initials: stringPtr("PC"), AvatarColor: stringPtr(getColor("Petros Christou"))},
+					{Rank: 5, Name: "Georgios Panayi", Team: "Ayia Napa U19", Value: 3.8, Logo: getTeamLogo("Ayia Napa U19"), Initials: stringPtr("GP"), AvatarColor: stringPtr(getColor("Georgios Panayi"))},
 				},
 			},
 		}

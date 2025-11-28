@@ -5,12 +5,7 @@
     <div class="header">
       <div class="title-section">
         <h1>
-          <svg
-            class="trophy-icon"
-            viewBox="0 0 24 24"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
+          <svg class="trophy-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path
               d="M19 5H17V3H7V5H5C3.9 5 3 5.9 3 7V8C3 10.55 4.92 12.63 7.39 12.94C8.02 14.44 9.37 15.57 11 15.9V19H7V21H17V19H13V15.9C14.63 15.57 15.98 14.44 16.61 12.94C19.08 12.63 21 10.55 21 8V7C21 5.9 20.1 5 19 5ZM5 8V7H7V10.82C5.84 10.4 5 9.3 5 8ZM19 8C19 9.3 18.16 10.4 17 10.82V7H19V8Z"
               fill="#212121"
@@ -20,40 +15,66 @@
         </h1>
         <p class="subtitle">
           {{
-            rankingType === "team"
-              ? "Team rankings across different performance categories"
-              : "Player rankings across different performance categories"
+            rankingType === 'team'
+              ? 'Team rankings across different performance categories'
+              : 'Player rankings across different performance categories'
           }}
         </p>
       </div>
     </div>
     <!-- Main Tabs: Team Rankings / Player Rankings -->
     <div class="main-tabs">
-      <button
-        class="tab-button"
-        [class.active]="rankingType === 'team'"
-        (click)="onRankingTypeChange('team')"
-      >
+      <button class="tab-button" [class.active]="rankingType === 'team'" (click)="onRankingTypeChange('team')">
         Team Rankings
       </button>
-      <button
-        class="tab-button"
-        [class.active]="rankingType === 'player'"
-        (click)="onRankingTypeChange('player')"
-      >
+      <button class="tab-button" [class.active]="rankingType === 'player'" (click)="onRankingTypeChange('player')">
         Player Rankings
       </button>
     </div>
 
     <!-- Category Sub-tabs -->
-    <div class="category-tabs">
+    <div class="category-tabs-wrapper">
       <button
-        *ngFor="let cat of categories; trackBy: trackByCategory"
-        class="category-tab"
-        [class.active]="selectedCategory === cat.value"
-        (click)="onCategoryChange(cat.value)"
+        class="scroll-arrow scroll-arrow-left"
+        [class.hidden]="!canScrollLeft"
+        (click)="scrollTabs('left')"
+        aria-label="Scroll tabs left"
       >
-        {{ cat.label }}
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path
+            d="M15 18L9 12L15 6"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
+      </button>
+      <div class="category-tabs" #categoryTabsContainer>
+        <button
+          *ngFor="let cat of categories; trackBy: trackByCategory"
+          class="category-tab"
+          [class.active]="selectedCategory === cat.value"
+          (click)="onCategoryChange(cat.value)"
+        >
+          {{ cat.label }}
+        </button>
+      </div>
+      <button
+        class="scroll-arrow scroll-arrow-right"
+        [class.hidden]="!canScrollRight"
+        (click)="scrollTabs('right')"
+        aria-label="Scroll tabs right"
+      >
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path
+            d="M9 18L15 12L9 6"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
       </button>
     </div>
 
@@ -69,25 +90,13 @@
 
     <!-- Rankings Content -->
     <div *ngIf="rankingsData && !loading && !error" class="rankings-content">
-      <div
-        *ngFor="
-          let category of rankingsData.categories;
-          trackBy: trackByCategoryCard
-        "
-        class="ranking-category-card"
-      >
+      <div *ngFor="let category of rankingsData.categories; trackBy: trackByCategoryCard" class="ranking-category-card">
         <h3 class="category-title">
           {{ category.title }}
           <span class="unit">({{ category.unit }})</span>
         </h3>
         <div class="ranking-list">
-          <div
-            *ngFor="
-              let entry of category.rankings;
-              trackBy: trackByRankingEntry
-            "
-            class="ranking-entry"
-          >
+          <div *ngFor="let entry of category.rankings; trackBy: trackByRankingEntry" class="ranking-entry">
             <div class="rank-number">{{ entry.rank }}</div>
             <div class="entry-info">
               <!-- Team Rankings -->
@@ -101,17 +110,15 @@
               <div *ngIf="rankingType === 'player'" class="player-entry">
                 <div
                   class="player-avatar"
-                  [style.background-color]="
-                    entry.avatarColor ||
-                    getAvatarColor(entry.name, entry.rank - 1)
-                  "
+                  [style.background-color]="entry.avatarColor || getAvatarColor(entry.name, entry.rank - 1)"
                 >
                   {{ entry.initials || getInitials(entry.name) }}
                 </div>
                 <div class="player-details">
                   <div class="player-name">{{ entry.name }}</div>
                   <div class="player-team" *ngIf="entry.team">
-                    {{ entry.team }}
+                    <img *ngIf="entry.logo" [src]="entry.logo" [alt]="entry.team" class="team-logo-small" />
+                    <span>{{ entry.team }}</span>
                   </div>
                 </div>
               </div>
