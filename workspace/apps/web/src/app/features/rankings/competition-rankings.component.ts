@@ -80,6 +80,8 @@ export class CompetitionRankingsComponent implements OnInit, AfterViewInit, OnDe
   public loadRankings(): void {
     this.loading = true;
     this.error = null;
+    // Keep previous data visible during loading to avoid showing "Loading..." text
+    const previousData = this.rankingsData;
 
     this.rankingsService
       .getCompetitionRankings(this.rankingType, this.selectedCategory)
@@ -91,6 +93,10 @@ export class CompetitionRankingsComponent implements OnInit, AfterViewInit, OnDe
         error: (err) => {
           this.error = "Failed to load rankings. Please try again.";
           this.loading = false;
+          // Restore previous data on error
+          if (previousData) {
+            this.rankingsData = previousData;
+          }
           console.error("Error loading rankings:", err);
         },
       });

@@ -78,18 +78,13 @@
       </button>
     </div>
 
-    <!-- Loading State -->
-    <div *ngIf="loading" class="loading">
-      <p>Loading rankings...</p>
-    </div>
-
     <!-- Error State -->
     <div *ngIf="error && !loading" class="error">
       <p>{{ error }}</p>
     </div>
 
     <!-- Rankings Content -->
-    <div *ngIf="rankingsData && !loading && !error" class="rankings-content">
+    <div *ngIf="rankingsData && !error" class="rankings-content" [class.loading]="loading">
       <div *ngFor="let category of rankingsData.categories; trackBy: trackByCategoryCard" class="ranking-category-card">
         <h3 class="category-title">
           {{ category.title }}
