@@ -1,7 +1,7 @@
 {
   "dependencies": {
     "@angular-devkit/core": "^20.0.0",
-    "@angular/animations": "^20.2.0",
+    "@angular/animations": "^21.0.1",
     "@angular/cdk": "^20.2.0",
     "@angular/common": "^20.2.0",
     "@angular/compiler": "^20.2.0",
